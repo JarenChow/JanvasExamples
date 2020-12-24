@@ -1,0 +1,22 @@
+{
+  "name": "janvasexamples",
+  "version": "1.0.3",
+  "description": "Examples created with janvas.",
+  "main": "dist/janvasexamples.min.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "janvas",
+    "examples",
+    "javascript",
+    "canvas",
+    "svg",
+    "2d"
+  ],
+  "author": "JarenChow",
+  "license": "MIT",
+  "dependencies": {
+    "janvas": "^2.3.3"
+  }
+}

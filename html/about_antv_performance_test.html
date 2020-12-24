@@ -1,0 +1,36 @@
+<!--https://github.com/JarenChow/Janvas Created by JarenChow in 2020-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AboutAntVPerformanceTest</title>
+  <style type="text/css">
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+
+<div id="app" style="width: 800px;height: 500px;left: 50%;top: 50%;transform: translate(-50%, -50%);border: 1px solid black"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/janvas/dist/janvas.min.js"></script>
+<script src="../dist/janvasexamples.min.js"></script>
+<script>
+  var antv = janvasexamples.antv("#app");
+</script>
+<script>
+// 原示例：https://g6.antv.vision/zh/examples/performance/perf#moreData
+fetch("https://gw.alipayobjects.com/os/bmw-prod/f1565312-d537-4231-adf5-81cb1cd3a0e8.json")
+  .then(function (res) {
+    return res.json();
+  }).then(function (res) {
+  antv.data(res);
+});
+</script>
+
+</body>
+</html>
