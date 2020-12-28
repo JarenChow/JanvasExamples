@@ -16,15 +16,14 @@ function coordinate(container) {
   },
   methods: {
     init: function () {
-      this.background = new janvas.Rect(this.ctx, 0, 0, 0, 0);
-      this.xAxis = new janvas.Arrow(this.ctx, 0, 0, 0, 0);
-      this.yAxis = new janvas.Arrow(this.ctx, 0, 0, 0, 0);
+      this.background = new janvas.Rect(this.$ctx, 0, 0, 0, 0);
+      this.xAxis = new janvas.Arrow(this.$ctx, 0, 0, 0, 0);
+      this.yAxis = new janvas.Arrow(this.$ctx, 0, 0, 0, 0);
       this.xLines = [];
       this.xTexts = [];
       this.yLines = [];
       this.yTexts = [];
-      this.oText = new janvas.Text(this.ctx, 0, 0, "0");
-      this.resize();
+      this.oText = new janvas.Text(this.$ctx, 0, 0, "0");
     },
     draw: function () {
       this.background.fill();
@@ -47,11 +46,11 @@ function coordinate(container) {
   },
   events: {
     resize: function () {
-      this.background.setWidth(this.width).setHeight(this.height);
-      this.xAxis.initXY(this.width, 0);
-      this.yAxis.initXY(0, this.height);
-      this.adjustLength(Math.floor(this.width / this._span - 0.2), this.xTexts, this.xLines, true);
-      this.adjustLength(Math.floor(this.height / this._span - 0.2), this.yTexts, this.yLines, false);
+      this.background.setWidth(this.$width).setHeight(this.$height);
+      this.xAxis.initXY(this.$width, 0);
+      this.yAxis.initXY(0, this.$height);
+      this.adjustLength(Math.floor(this.$width / this._span - 0.2), this.xTexts, this.xLines, true);
+      this.adjustLength(Math.floor(this.$height / this._span - 0.2), this.yTexts, this.yLines, false);
       this.setStyles();
       this.draw();
     }
@@ -78,16 +77,16 @@ function coordinate(container) {
       while ((len = lines.length) < count) {
         pos = (len + 1) * this._span;
         if (inAxisX) {
-          texts.push(new janvas.Text(this.ctx, pos, 0, pos + ""));
-          lines.push(new janvas.Line(this.ctx, pos, 0, pos, 0));
+          texts.push(new janvas.Text(this.$ctx, pos, 0, pos + ""));
+          lines.push(new janvas.Line(this.$ctx, pos, 0, pos, 0));
         } else {
-          texts.push(new janvas.Text(this.ctx, 0, pos, pos + ""));
-          lines.push(new janvas.Line(this.ctx, 0, pos, 0, pos));
+          texts.push(new janvas.Text(this.$ctx, 0, pos, pos + ""));
+          lines.push(new janvas.Line(this.$ctx, 0, pos, 0, pos));
         }
       }
       if (count >= 0) texts.length = lines.length = count;
       lines.forEach(function (line) {
-        inAxisX ? line.setEndY(this.height) : line.setEndX(this.width);
+        inAxisX ? line.setEndY(this.$height) : line.setEndX(this.$width);
       }, this);
     }
   }
@@ -266,10 +265,10 @@ function antv(container) {
       this.nodes = [];
       this.edges = [];
       this.hint = this.factory.newHint();
-      this.background = new janvas.Rect(this.ctx, 0, 0, this.width, this.height);
+      this.background = new janvas.Rect(this.$ctx, 0, 0, this.$width, this.$height);
     },
     draw: function () {
-      this.background.clear(0, 0, this.width, this.height);
+      this.background.clear(0, 0, this.$width, this.$height);
       this.edges.forEach(function (edge) {
         edge.draw();
       });
@@ -293,7 +292,6 @@ function antv(container) {
   },
   events: {
     mousedown: function () {
-      this.mousemove();
       this._mousedown = true;
       this.nodes.forEach(function (node) {
         node.mark();
@@ -305,24 +303,23 @@ function antv(container) {
       }
       this.draw();
     },
-    mousemove: function () {
+    mousemove: function (ev) {
       if (this._mousedown) {
         if (this._current === void (0)) {
           this.nodes.forEach(function (node) {
-            node.drag(this.moveX, this.moveY);
+            node.drag(ev.$moveX, ev.$moveY);
           }, this);
         } else {
-          this._current.drag(this.moveX, this.moveY);
-          this.hint.setXY(this.x, this.y);
+          this._current.drag(ev.$moveX, ev.$moveY);
+          this.hint.setXY(ev.$x, ev.$y);
           this.edges.forEach(function (edge) {
             edge.refresh();
           });
         }
-        this.draw();
       } else {
         var mousein = true;
         this.nodes.forEach(function (node) {
-          if (node.isPointInPath(this.x, this.y)) {
+          if (node.isPointInPath(ev.$x, ev.$y)) {
             this._current = node;
             mousein = false;
           }
@@ -334,11 +331,11 @@ function antv(container) {
         } else {
           this._current.highlight(true);
           this.hint.setLabel(this._current.getLabel());
-          this.hint.setXY(this.x, this.y);
+          this.hint.setXY(ev.$x, ev.$y);
           this.hint.show(true);
         }
-        this.draw();
       }
+      this.draw();
     },
     mouseup: function () {
       this._mousedown = false;
@@ -348,19 +345,18 @@ function antv(container) {
       });
       this.draw();
     },
-    wheel: function () {
+    wheel: function (ev) {
       this.nodes.forEach(function (node) {
-        node.wheel(this.x, this.y, this.scaling, this.scale)
+        node.wheel(ev.$x, ev.$y, ev.$scaling, ev.$scale)
       }, this);
       this.edges.forEach(function (edge) {
         edge.refresh();
-        edge.setLineWidth(this.scale);
+        edge.setLineWidth(ev.$scale);
       }, this);
       this.draw();
     },
     resize: function () {
-      this.background.setWidth(this.width).setHeight(this.height);
-      this.draw();
+      this.background.setWidth(this.$width).setHeight(this.$height);
     }
   }
 });
@@ -369,9 +365,9 @@ function antv(container) {
 function taichi(container) {
   return new janvas.Canvas({
   container: container,
+  interval: 16.67,
+  times: -1,
   props: {
-    interval: 16.67,
-    times: -1,
     addCount: 0,
     taichi: []
   },
@@ -510,8 +506,8 @@ function taichi(container) {
   },
   methods: {
     init: function () {
-      this.background = new janvas.Rect(this.ctx, 0, 0, this.width, this.height);
-      this.raf.start();
+      this.background = new janvas.Rect(this.$ctx, 0, 0, this.$width, this.$height);
+      this.$raf.start();
     },
     update: function (ts) {
       if (ts > this.addCount * 1000) {
@@ -533,29 +529,29 @@ function taichi(container) {
       });
     },
     draw: function () {
-      this.background.clear(0, 0, this.width, this.height);
+      this.background.clear(0, 0, this.$width, this.$height);
       this.taichi.forEach(function (tc) {
         tc.draw();
       });
     }
   },
   events: {
-    mousedown: function () {
-      this.add(this.x, this.y);
+    mousedown: function (ev) {
+      this.add(ev.$x, ev.$y);
     },
     visibility: function (visible) {
-      if (visible) this.raf.resume();
-      else this.raf.pause();
+      if (visible) this.$raf.resume();
+      else this.$raf.pause();
     },
     resize: function () {
-      this.background.setWidth(this.width).setHeight(this.height);
+      this.background.setWidth(this.$width).setHeight(this.$height);
     }
   },
   functions: {
     add: function (x, y) {
       this.taichi.push(this.factory.createTaichi(
-        x || janvas.Utils.randInt(0, this.width),
-        y || janvas.Utils.randInt(0, this.height),
+        x || janvas.Utils.randInt(0, this.$width),
+        y || janvas.Utils.randInt(0, this.$height),
         janvas.Utils.randInt(20, 100)
       ));
     }
@@ -568,7 +564,7 @@ function tiger(container) {
   container: container,
   methods: {
     init: function () {
-      this.background = new janvas.Rect(this.ctx, 0, 0, this.width, this.height);
+      this.background = new janvas.Rect(this.$ctx, 0, 0, this.$width, this.$height);
       this.shapes = [];
     },
     data: function (svgXML) {
@@ -576,7 +572,7 @@ function tiger(container) {
         path, shape, fill, stroke, lineWidth, style;
       for (var i = 0; i < paths.length; i++) {
         path = paths[i];
-        shape = new janvas.FixedShape(this.ctx, 0, 0, path.getAttribute("d"));
+        shape = new janvas.FixedShape(this.$ctx, 0, 0, path.getAttribute("d"));
         fill = path.getAttribute("fill");
         stroke = path.getAttribute("stroke");
         lineWidth = parseFloat(path.getAttribute("stroke-width"));
@@ -594,7 +590,7 @@ function tiger(container) {
       this.draw();
     },
     draw: function () {
-      this.background.clear(0, 0, this.width, this.height);
+      this.background.clear(0, 0, this.$width, this.$height);
       this.shapes.forEach(function (shape) {
         shape.fillStroke();
       });
@@ -608,32 +604,32 @@ function tiger(container) {
         shape.lastY = shape.getStartY();
       });
     },
-    mousemove: function () {
+    mousemove: function (ev) {
       if (this._mousedown) {
         this.shapes.forEach(function (shape) {
-          var mx = shape.lastX + this.moveX, my = shape.lastY + this.moveY;
+          var mx = shape.lastX + ev.$moveX, my = shape.lastY + ev.$moveY;
           shape.init(mx, my, mx, my);
-        }, this);
+        });
       } else {
         this.shapes.forEach(function (shape) {
           shape.getStyle().setLineWidth(
-            shape.isPointInPath(this.x, this.y)
+            shape.isPointInPath(ev.$x, ev.$y)
               ? 10 : shape.getStyle().lineWidthCache
           );
-        }, this);
+        });
       }
       this.draw();
     },
     mouseup: function () {
       this._mousedown = false;
     },
-    wheel: function () {
+    wheel: function (ev) {
       this.shapes.forEach(function (shape) {
-        var targetSx = this.x + (shape.getCenterX() - this.x) * this.scaling,
-          targetSy = this.y + (shape.getCenterY() - this.y) * this.scaling;
+        var targetSx = ev.$x + (shape.getCenterX() - ev.$x) * ev.$scaling,
+          targetSy = ev.$y + (shape.getCenterY() - ev.$y) * ev.$scaling;
         shape.init(targetSx, targetSy, targetSx, targetSy)
-          .getMatrix().setScale(this.scale, this.scale);
-      }, this);
+          .getMatrix().setScale(ev.$scale, ev.$scale);
+      });
       this.draw();
     }
   },
@@ -653,22 +649,21 @@ function clock(container) {
   container: container,
   methods: {
     init: function () {
-      var bezier = new janvas.Bezier(this.ctx, 0, 0, [0, 0, 100, 1457, 200, -460, 300, 989, 400, 405, 500, 500]);
+      var bezier = new janvas.Bezier(this.$ctx, 0, 0, [0, 0, 100, 1457, 200, -460, 300, 989, 400, 405, 500, 500]);
       bezier.getMatrix().setScale(1 / 500, 1 / 500);
       this.animation = bezier.setTransform().getTransformedPoints().filter(function () {
         return arguments[1] % 2 === 1;
       });
-      this.background = new janvas.Rect(this.ctx); // 背景
-      this.bottom = new janvas.RoundRect(this.ctx); // 时钟底
-      this.bottom.border = new janvas.RoundRect(this.ctx);
-      this.outer = new janvas.Arc(this.ctx); // 主圆
-      this.outer.border = new janvas.Arc(this.ctx); // 主圆阴影
-      this.second = new janvas.RoundRect(this.ctx);
-      this.minute = new janvas.RoundRect(this.ctx);
-      this.hour = new janvas.RoundRect(this.ctx);
-      this.dot = new janvas.Arc(this.ctx);
+      this.background = new janvas.Rect(this.$ctx); // 背景
+      this.bottom = new janvas.RoundRect(this.$ctx); // 时钟底
+      this.bottom.border = new janvas.RoundRect(this.$ctx);
+      this.outer = new janvas.Arc(this.$ctx); // 主圆
+      this.outer.border = new janvas.Arc(this.$ctx); // 主圆阴影
+      this.second = new janvas.RoundRect(this.$ctx);
+      this.minute = new janvas.RoundRect(this.$ctx);
+      this.hour = new janvas.RoundRect(this.$ctx);
+      this.dot = new janvas.Arc(this.$ctx);
       this.initStyles();
-      this.resize();
       this.visibility(true);
     },
     initStyles: function () {
@@ -681,16 +676,16 @@ function clock(container) {
       this.dot.getStyle().setStrokeStyle("hsl(0, 0%, 63%)");
     },
     resizeStyles: function () {
-      var min = Math.min(this.width, this.height);
+      var min = Math.min(this.$width, this.$height);
       this.shadow.setShadowBlur(min / 140);
       this.shadow.basis.init(min / 35, 0);
       this.gradient("hsl(0, 0%, 100%)", "hsl(0, 0%, 90%)",
         this.bottom, this.hour, this.minute, this.dot);
       this.bottom.border.getStyle().setLineWidth(min / 35);
-      this.bottom.shadow.setShadowBlur(min / 140 * 3).setShadowOffsetX(-this.width);
+      this.bottom.shadow.setShadowBlur(min / 140 * 3).setShadowOffsetX(-this.$width);
       this.gradient("hsl(0, 0%, 40%)", "hsl(0, 0%, 23%)", this.outer);
       this.outer.border.getStyle().setLineWidth(min / 35);
-      this.outer.shadow.setShadowBlur(min / 70).setShadowOffsetX(-this.width);
+      this.outer.shadow.setShadowBlur(min / 70).setShadowOffsetX(-this.$width);
       this.gradient("hsl(0, 80%, 70%)", "hsl(0, 80%, 50%)", this.second);
     },
     update: function (ts) {
@@ -715,36 +710,36 @@ function clock(container) {
     },
     draw: function () {
       this.background.fill();
-      this.cfg.setShadowStyles(this.shadow);
+      this.$cfg.setShadowStyles(this.shadow);
       this.bottom.fill();
-      this.cfg.setShadowStyles(this.bottom.shadow);
+      this.$cfg.setShadowStyles(this.bottom.shadow);
       this.bottom.clip().border.stroke().restore();
-      this.cfg.resetShadowStyles();
+      this.$cfg.resetShadowStyles();
       this.outer.fill();
-      this.cfg.setShadowStyles(this.outer.shadow);
+      this.$cfg.setShadowStyles(this.outer.shadow);
       this.outer.border.stroke();
-      this.cfg.setShadowStyles(this.shadow);
+      this.$cfg.setShadowStyles(this.shadow);
       this.hour.fill();
       this.minute.fill();
       this.second.fill();
       this.dot.fill();
-      this.cfg.resetShadowStyles();
+      this.$cfg.resetShadowStyles();
       this.dot.stroke();
     }
   },
   events: {
     resize: function () {
       var goldenRatio = 0.809,
-        size = Math.min(this.width, this.height) * goldenRatio,
-        cx = this.width / 2, cy = this.height / 2;
+        size = Math.min(this.$width, this.$height) * goldenRatio,
+        cx = this.$width / 2, cy = this.$height / 2;
       this._sizeBy2 = size / 2;
-      this.background.initXY(0, 0).setWidth(this.width).setHeight(this.height);
+      this.background.initXY(0, 0).setWidth(this.$width).setHeight(this.$height);
       this.bottom.init(cx - this._sizeBy2, cy - this._sizeBy2, cx, cy)
         .setWidth(size).setHeight(size).setRadius(size / 4);
-      this.bottom.border.initXY(this.bottom.getStartX() + this.width, this.bottom.getStartY())
+      this.bottom.border.initXY(this.bottom.getStartX() + this.$width, this.bottom.getStartY())
         .setWidth(size).setHeight(size).setRadius(size / 4);
       this.outer.initXY(cx, cy).setRadius(size * goldenRatio / 2);
-      this.outer.border.initXY(cx + this.width, cy).setRadius(this.outer.getRadius());
+      this.outer.border.initXY(cx + this.$width, cy).setRadius(this.outer.getRadius());
       var offset = this.outer.getRadius() * Math.pow(goldenRatio, 18);
       this.second.init(cx - offset * 8, cy - offset, cx, cy)
         .setWidth(this.outer.getRadius() * goldenRatio + offset * 8)
@@ -763,9 +758,9 @@ function clock(container) {
     visibility: function (visible) {
       if (visible) {
         this.resetTime();
-        this.raf.start();
+        this.$raf.start();
       } else {
-        this.raf.stop();
+        this.$raf.stop();
       }
     },
     onEvent: janvas.Utils.noop
@@ -818,9 +813,9 @@ clock.onEvent = function (hours, minutes, seconds) {
 function beziermaker(container) {
   return new janvas.Canvas({
   container: container,
+  interval: 16,
+  times: -1,
   props: {
-    interval: 16,
-    times: -1,
     position: 0, // 指示器运行位置
     size: Math.floor(10000 / 16) // 10000ms/16ms，10秒运行次数
   },
@@ -902,22 +897,21 @@ function beziermaker(container) {
   },
   methods: {
     init: function () {
-      this.background = new janvas.Rect(this.ctx, 0, 0, this.width, this.height);
+      this.background = new janvas.Rect(this.$ctx, 0, 0, this.$width, this.$height);
       this.dots = [];
-      this.polyline = new janvas.Polyline(this.ctx, 0, 0, []);
-      this.bezier = new janvas.Bezier(this.ctx, 0, 0, this.polyline.getPoints(), this.size * 2);
+      this.polyline = new janvas.Polyline(this.$ctx, 0, 0, []);
+      this.bezier = new janvas.Bezier(this.$ctx, 0, 0, this.polyline.getPoints(), this.size * 2);
       this.bezier.getStyle().setStrokeStyle("hsl(0, 80%, 50%)");
-      this.transformedPoints = this.bezier.setTransform().getTransformedPoints();
-      this.hint = new janvas.Text(this.ctx, 0, 0, "");
+      this.transformedPoints = this.bezier.getTransformedPoints();
+      this.hint = new janvas.Text(this.$ctx, 0, 0, "");
       this.hint.getStyle().setFillStyle("rgba(0, 0, 0, 0.5)")
         .setFont("12px sans-serif").setTextAlign("end").setTextBaseline("middle");
-      this.cursor = new janvas.ArrowHead(this.ctx, 0, 0);
+      this.cursor = new janvas.ArrowHead(this.$ctx, 0, 0);
       this.cursor.getStyle().setFillStyle("hsl(270, 80%, 50%)");
-      this.raf.start();
+      this.$raf.start();
     },
-    update: janvas.Utils.noop,
     draw: function () {
-      this.background.clear(0, 0, this.width, this.height);
+      this.background.clear(0, 0, this.$width, this.$height);
       this.polyline.stroke();
       this.bezier.stroke();
       this.dots.forEach(function (dot) {
@@ -930,15 +924,16 @@ function beziermaker(container) {
   },
   events: {
     mousedown: function (ev) {
+      if(!this.$raf.isRunning()) return this.$raf.resume();
       if (this._autoResize) {
         var _dispatch;
-        if (this.x > this.width * 0.875) _dispatch = this.container.style.width = this.width * 1.5 + "px";
-        if (this.y > this.height * 0.875) _dispatch = this.container.style.height = this.height * 1.5 + "px";
+        if (ev.$x > this.$width * 0.875) _dispatch = this.$wrapper.style.width = this.$width * 1.5 + "px";
+        if (ev.$y > this.$height * 0.875) _dispatch = this.$wrapper.style.height = this.$height * 1.5 + "px";
         if (_dispatch) dispatchEvent(new Event("resize"));
         // if (_dispatch) {
-        //   var evt = document.createEvent("Event");
-        //   evt.initEvent("resize", true, true);
-        //   dispatchEvent(evt);
+        //   var ev = document.createEvent("Event");
+        //   ev.initEvent("resize", true, true);
+        //   dispatchEvent(ev);
         // }
       }
       if (ev.buttons === 4) {
@@ -952,8 +947,8 @@ function beziermaker(container) {
           this.toggleLocked(this.current);
         } else {
           if (this.locked) this.locked.highlight(false);
-          this.dots.push(this.locked = this.current = this.factory.newDot(this.x, this.y));
-          this.polyline.insert(this.x, this.y);
+          this.dots.push(this.locked = this.current = this.factory.newDot(ev.$x, ev.$y));
+          this.polyline.insert(ev.$x, ev.$y);
         }
         this.locked.mark();
       }
@@ -961,17 +956,17 @@ function beziermaker(container) {
     mousemove: function (ev) {
       if (ev.buttons === 2) { // 鼠标右键
         this.dots.forEach(function (dot) {
-          dot.onmove(this.moveX, this.moveY);
+          dot.onmove(ev.$moveX, ev.$moveY);
           this.polyline.update(dot.getX(), dot.getY(), dot.getIndex());
         }, this);
       } else if (ev.buttons === 1) { // 鼠标左键
-        this.locked.onmove(this.moveX, this.moveY);
+        this.locked.onmove(ev.$moveX, ev.$moveY);
         this.polyline.update(this.locked.getX(), this.locked.getY(), this.locked.getIndex());
       } else { // 无按键，默认行为
         if (this.current) this.current.highlight(false);
         this.current = void (0);
         this.dots.forEach(function (dot) {
-          if (dot.isPointInPath(this.x, this.y)) this.current = dot;
+          if (dot.isPointInPath(ev.$x, ev.$y)) this.current = dot;
         }, this);
         if (this.current) {
           this.locked.highlight(false);
@@ -980,12 +975,13 @@ function beziermaker(container) {
           if (this.locked) this.locked.highlight(true);
         }
       }
-      this.hint.initXY(this.x, this.y).setText("(" + this.x + "," + this.y + ")");
+      this.hint.initXY(ev.$x, ev.$y).setText("(" + ev.$x + "," + ev.$y + ")");
     },
     keydown: function (ev) {
       if (this.locked === void (0)) return;
+      ev.preventDefault();
       var increase = ev.repeat ? 5 : 1;
-      switch (this.key) {
+      switch (ev.key) {
         case "ArrowUp":
         case "w":
           this.locked.initXY(this.locked.getX(), this.locked.getY() - increase);
@@ -1032,16 +1028,13 @@ function beziermaker(container) {
       }
     },
     resize: function () {
-      this.background.setWidth(this.width).setHeight(this.height);
+      this.background.setWidth(this.$width).setHeight(this.$height);
     },
     autoResize: function (flag) {
       this._autoResize = flag;
     },
     blur: function () {
-      this.raf.pause();
-    },
-    focus: function () {
-      this.raf.resume();
+      this.$raf.pause();
     }
   },
   functions: {
@@ -1066,14 +1059,15 @@ function beziermaker(container) {
     }
   }
 });
+bezierMaker.autoResize(true);
 }
 
 function flydots(container) {
   return new janvas.Canvas({
   container: container,
+  interval: 16,
+  times: -1,
   props: {
-    interval: 16.67,
-    times: -1,
     dots: [],
     lines: []
   },
@@ -1169,8 +1163,9 @@ function flydots(container) {
   },
   methods: {
     init: function () {
+      this.background = new janvas.Rect(this.$ctx, 0, 0);
       for (var i = 0; i < 100; i++) {
-        var dot = this.factory.newDot(this.width, this.height);
+        var dot = this.factory.newDot(this.$width, this.$height);
         this.dots.forEach(function (target) {
           this.lines.push(this.factory.newLine(dot, target));
         }, this);
@@ -1180,9 +1175,9 @@ function flydots(container) {
       this.dots.forEach(function (target) {
         this.lines.push(this.factory.newLine(this.cursor, target));
       }, this);
-      this.raf.start();
+      this.$raf.start();
     },
-    update: function (ts) {
+    update: function () {
       this.dots.forEach(function (dot) {
         dot.update();
       }, this);
@@ -1191,7 +1186,7 @@ function flydots(container) {
       });
     },
     draw: function () {
-      this.ctx.clearRect(0, 0, this.width, this.height);
+      this.background.clear(0, 0, this.$width, this.$height);
       this.lines.forEach(function (line) {
         line.draw();
       });
@@ -1201,13 +1196,13 @@ function flydots(container) {
     }
   },
   events: {
-    mousedown: function () {
+    mousedown: function (ev) {
       this.dots.forEach(function (dot) {
-        dot.closer(this.x, this.y);
+        dot.closer(ev.$x, ev.$y);
       }, this);
     },
-    mousemove: function () {
-      this.cursor.initXY(this.x, this.y);
+    mousemove: function (ev) {
+      this.cursor.initXY(ev.$x, ev.$y);
     },
     mouseup: function () {
       this.dots.forEach(function (dot) {
@@ -1215,8 +1210,9 @@ function flydots(container) {
       });
     },
     resize: function () {
+      this.background.setWidth(this.$width).setHeight(this.$height);
       this.dots.forEach(function (dot) {
-        dot.setBounding(this.width, this.height);
+        dot.setBounding(this.$width, this.$height);
       }, this);
     }
   }
@@ -1226,23 +1222,26 @@ function flydots(container) {
 function aboutwheel(container) {
   return new janvas.Canvas({
   container: container,
+  interval: 16,
+  times: -1,
   props: {
     size: 50
   },
   methods: {
     init: function () {
-      this.background = new janvas.Rect(this.ctx, 0, 0, this.width, this.height);
-      var cx = this.width / 2, cy = this.height / 2;
-      this.img = new janvas.Image(this.ctx, cx - this.size, cy - this.size,
+      this.background = new janvas.Rect(this.$ctx, 0, 0, this.$width, this.$height);
+      var cx = this.$width / 2, cy = this.$height / 2;
+      this.img = new janvas.Image(this.$ctx, cx - this.size, cy - this.size,
         "img/complex.svg", cx, cy, this.size * 2, this.size * 2);
       this.img.getStyle().setStrokeStyle("grey");
-      this.raf.start();
+      this.$raf.start();
     },
     update: function (ts) {
       this.img.getMatrix().setAngle(Math.PI / 2000 * ts);
+      this.scaleAnimation();
     },
     draw: function () {
-      this.background.clear(0, 0, this.width, this.height);
+      this.background.clear(0, 0, this.$width, this.$height);
       this.img.draw();
       if (this.img._mousein) this.img.stroke();
     }
@@ -1255,18 +1254,18 @@ function aboutwheel(container) {
         this.img.lastY = this.img.getStartY();
       }
     },
-    mousemove: function () {
+    mousemove: function (ev) {
       if (this._mousedown) {
-        var mx = this.img.lastX + this.moveX, my = this.img.lastY + this.moveY;
+        var mx = this.img.lastX + ev.$moveX, my = this.img.lastY + ev.$moveY;
         this.img.init(mx, my, mx + this.size, my + this.size);
       } else {
-        this.img._mousein = this.img.isPointInPath(this.x, this.y);
+        this.img._mousein = this.img.isPointInPath(ev.$x, ev.$y);
       }
     },
     mouseup: function () {
       this._mousedown = false;
     },
-    wheel: function () {
+    wheel: function (ev) {
       /**
        * 当我们缩放一个对象的时候，有两种情况
        *   1. 中心点为 0, 0
@@ -1290,10 +1289,32 @@ function aboutwheel(container) {
         this.img._sy * (1 - this.scale)
       );*/
       // 方式二（推荐）：
-      var targetSx = this.x + (this.img.getCenterX() - this.x) * this.scaling,
-        targetSy = this.y + (this.img.getCenterY() - this.y) * this.scaling;
-      this.img.init(targetSx - this.size, targetSy - this.size, targetSx, targetSy)
-        .getMatrix().setScale(this.scale, this.scale);
+      // var targetCx = ev.$x + (this.img.getCenterX() - ev.$x) * ev.$scaling,
+      //   targetCy = ev.$y + (this.img.getCenterY() - ev.$y) * ev.$scaling;
+      // this.img.init(targetCx - this.size, targetCy - this.size, targetCx, targetCy)
+      //   .getMatrix().setScale(ev.$scale, ev.$scale);
+      // 方式三：方式二的简单动画版本，有需求时有必要写进 components 里进行实现，以便解耦
+      this.img.lastCx = this.img.getCenterX();
+      this.img.lastCy = this.img.getCenterY();
+      this.img.targetCx = ev.$x + (this.img.getCenterX() - ev.$x) * ev.$scaling;
+      this.img.targetCy = ev.$y + (this.img.getCenterY() - ev.$y) * ev.$scaling;
+      this.img.lastScale = this.img.getMatrix().getScaleX();
+      this.img.targetScale = ev.$scale;
+      this.img.count = 0;
+      this.img.maxCount = Math.floor(300 / this.$interval);
+    }
+  },
+  functions: {
+    scaleAnimation: function () {
+      if (this.img.count <= this.img.maxCount) {
+        var lambda = this.img.count / this.img.maxCount,
+          stampCx = this.img.lastCx + (this.img.targetCx - this.img.lastCx) * lambda,
+          stampCy = this.img.lastCy + (this.img.targetCy - this.img.lastCy) * lambda,
+          scale = this.img.lastScale + (this.img.targetScale - this.img.lastScale) * lambda;
+        this.img.init(stampCx - this.size, stampCy - this.size, stampCx, stampCy)
+          .getMatrix().setScale(scale, scale);
+        this.img.count++;
+      }
     }
   }
 });
@@ -1308,25 +1329,26 @@ function aboutedge(container) {
   },
   methods: {
     init: function () {
-      this.start = new janvas.Arc(this.ctx, 200, 250, 5);
+      this.background = new janvas.Rect(this.$ctx, 0, 0, this.$width, this.$height);
+      this.start = new janvas.Arc(this.$ctx, 200, 250, 5);
       this.start.getStyle().setFillStyle("hsl(0, 80%, 60%)");
-      this.end = new janvas.Arc(this.ctx, 500, 250, 5);
+      this.end = new janvas.Arc(this.$ctx, 500, 250, 5);
       this.end.getStyle().setFillStyle("hsl(90, 80%, 60%)");
-      this.an = new janvas.Arc(this.ctx, 525, 300, 5);
+      this.an = new janvas.Arc(this.$ctx, 525, 300, 5);
       this.an.getStyle().setFillStyle("hsl(180, 80%, 60%)");
       this.points.push(this.start, this.end, this.an);
-      this.edge = new janvas.Edge(this.ctx);
-      this.text = new janvas.Text(this.ctx, 0, 0, "Janvas");
+      this.edge = new janvas.Edge(this.$ctx);
+      this.text = new janvas.Text(this.$ctx, 0, 0, "Janvas");
       this.text.getStyle().setFont("12px sans-serif").setTextAlign("center")
         .setTextBaseline("middle");
       this.edge.setEmptyLength(janvas.Utils.measureTextWidth(this.text.getText(),
         this.text.getStyle().getFont()) / 0.809);
-      this.head = new janvas.ArrowHead(this.ctx).setArrowLength(12);
+      this.head = new janvas.ArrowHead(this.$ctx).setArrowLength(12);
       this.head.getStyle().setFillStyle("hsl(270, 80%, 60%)");
       this.setCurvePropsAndDraw();
     },
     draw: function () {
-      this.ctx.clearRect(0, 0, this.width, this.height);
+      this.background.clear(0, 0, this.$width, this.$height);
       this.edge.stroke();
       if (this.edge.lambdaInRange()) {
         var an = this.edge.getLineAngle();
@@ -1352,19 +1374,19 @@ function aboutedge(container) {
       if (this._mousedown) {
         if (ev.buttons === 2) {
           this.points.forEach(function (point) {
-            point.initXY(point.lastX + this.moveX, point.lastY + this.moveY);
+            point.initXY(point.lastX + ev.$moveX, point.lastY + ev.$moveY);
           }, this);
           this.setCurvePropsAndDraw();
         } else {
           if (!this.current) return;
-          this.current.initXY(this.current.lastX + this.moveX,
-            this.current.lastY + this.moveY);
+          this.current.initXY(this.current.lastX + ev.$moveX,
+            this.current.lastY + ev.$moveY);
           this.setCurvePropsAndDraw();
         }
       } else {
         this.current = void (0);
         this.points.forEach(function (point) {
-          if (point.isPointInPath(this.x, this.y)) {
+          if (point.isPointInPath(ev.$x, ev.$y)) {
             this.current = point;
             this.setCursor("pointer");
           }
@@ -1385,7 +1407,7 @@ function aboutedge(container) {
       this.draw();
     },
     setCursor: function (cursor) {
-      if (this.canvas.style.cursor !== cursor) this.canvas.style.cursor = cursor;
+      if (this.$canvas.style.cursor !== cursor) this.$canvas.style.cursor = cursor;
     }
   }
 });

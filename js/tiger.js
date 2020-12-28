@@ -2,7 +2,7 @@ var tiger = new janvas.Canvas({
   container: "#app",
   methods: {
     init: function () {
-      this.background = new janvas.Rect(this.ctx, 0, 0, this.width, this.height);
+      this.background = new janvas.Rect(this.$ctx, 0, 0, this.$width, this.$height);
       this.shapes = [];
     },
     data: function (svgXML) {
@@ -10,7 +10,7 @@ var tiger = new janvas.Canvas({
         path, shape, fill, stroke, lineWidth, style;
       for (var i = 0; i < paths.length; i++) {
         path = paths[i];
-        shape = new janvas.FixedShape(this.ctx, 0, 0, path.getAttribute("d"));
+        shape = new janvas.FixedShape(this.$ctx, 0, 0, path.getAttribute("d"));
         fill = path.getAttribute("fill");
         stroke = path.getAttribute("stroke");
         lineWidth = parseFloat(path.getAttribute("stroke-width"));
@@ -28,7 +28,7 @@ var tiger = new janvas.Canvas({
       this.draw();
     },
     draw: function () {
-      this.background.clear(0, 0, this.width, this.height);
+      this.background.clear(0, 0, this.$width, this.$height);
       this.shapes.forEach(function (shape) {
         shape.fillStroke();
       });
@@ -42,32 +42,32 @@ var tiger = new janvas.Canvas({
         shape.lastY = shape.getStartY();
       });
     },
-    mousemove: function () {
+    mousemove: function (ev) {
       if (this._mousedown) {
         this.shapes.forEach(function (shape) {
-          var mx = shape.lastX + this.moveX, my = shape.lastY + this.moveY;
+          var mx = shape.lastX + ev.$moveX, my = shape.lastY + ev.$moveY;
           shape.init(mx, my, mx, my);
-        }, this);
+        });
       } else {
         this.shapes.forEach(function (shape) {
           shape.getStyle().setLineWidth(
-            shape.isPointInPath(this.x, this.y)
+            shape.isPointInPath(ev.$x, ev.$y)
               ? 10 : shape.getStyle().lineWidthCache
           );
-        }, this);
+        });
       }
       this.draw();
     },
     mouseup: function () {
       this._mousedown = false;
     },
-    wheel: function () {
+    wheel: function (ev) {
       this.shapes.forEach(function (shape) {
-        var targetSx = this.x + (shape.getCenterX() - this.x) * this.scaling,
-          targetSy = this.y + (shape.getCenterY() - this.y) * this.scaling;
+        var targetSx = ev.$x + (shape.getCenterX() - ev.$x) * ev.$scaling,
+          targetSy = ev.$y + (shape.getCenterY() - ev.$y) * ev.$scaling;
         shape.init(targetSx, targetSy, targetSx, targetSy)
-          .getMatrix().setScale(this.scale, this.scale);
-      }, this);
+          .getMatrix().setScale(ev.$scale, ev.$scale);
+      });
       this.draw();
     }
   },

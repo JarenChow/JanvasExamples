@@ -169,10 +169,10 @@ var antv = new janvas.Canvas({
       this.nodes = [];
       this.edges = [];
       this.hint = this.factory.newHint();
-      this.background = new janvas.Rect(this.ctx, 0, 0, this.width, this.height);
+      this.background = new janvas.Rect(this.$ctx, 0, 0, this.$width, this.$height);
     },
     draw: function () {
-      this.background.clear(0, 0, this.width, this.height);
+      this.background.clear(0, 0, this.$width, this.$height);
       this.edges.forEach(function (edge) {
         edge.draw();
       });
@@ -196,7 +196,6 @@ var antv = new janvas.Canvas({
   },
   events: {
     mousedown: function () {
-      this.mousemove();
       this._mousedown = true;
       this.nodes.forEach(function (node) {
         node.mark();
@@ -208,24 +207,23 @@ var antv = new janvas.Canvas({
       }
       this.draw();
     },
-    mousemove: function () {
+    mousemove: function (ev) {
       if (this._mousedown) {
         if (this._current === void (0)) {
           this.nodes.forEach(function (node) {
-            node.drag(this.moveX, this.moveY);
+            node.drag(ev.$moveX, ev.$moveY);
           }, this);
         } else {
-          this._current.drag(this.moveX, this.moveY);
-          this.hint.setXY(this.x, this.y);
+          this._current.drag(ev.$moveX, ev.$moveY);
+          this.hint.setXY(ev.$x, ev.$y);
           this.edges.forEach(function (edge) {
             edge.refresh();
           });
         }
-        this.draw();
       } else {
         var mousein = true;
         this.nodes.forEach(function (node) {
-          if (node.isPointInPath(this.x, this.y)) {
+          if (node.isPointInPath(ev.$x, ev.$y)) {
             this._current = node;
             mousein = false;
           }
@@ -237,11 +235,11 @@ var antv = new janvas.Canvas({
         } else {
           this._current.highlight(true);
           this.hint.setLabel(this._current.getLabel());
-          this.hint.setXY(this.x, this.y);
+          this.hint.setXY(ev.$x, ev.$y);
           this.hint.show(true);
         }
-        this.draw();
       }
+      this.draw();
     },
     mouseup: function () {
       this._mousedown = false;
@@ -251,19 +249,18 @@ var antv = new janvas.Canvas({
       });
       this.draw();
     },
-    wheel: function () {
+    wheel: function (ev) {
       this.nodes.forEach(function (node) {
-        node.wheel(this.x, this.y, this.scaling, this.scale)
+        node.wheel(ev.$x, ev.$y, ev.$scaling, ev.$scale)
       }, this);
       this.edges.forEach(function (edge) {
         edge.refresh();
-        edge.setLineWidth(this.scale);
+        edge.setLineWidth(ev.$scale);
       }, this);
       this.draw();
     },
     resize: function () {
-      this.background.setWidth(this.width).setHeight(this.height);
-      this.draw();
+      this.background.setWidth(this.$width).setHeight(this.$height);
     }
   }
 });

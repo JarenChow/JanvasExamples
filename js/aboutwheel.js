@@ -1,22 +1,25 @@
 var aboutWheel = new janvas.Canvas({
   container: "#app",
+  interval: 16,
+  times: -1,
   props: {
     size: 50
   },
   methods: {
     init: function () {
-      this.background = new janvas.Rect(this.ctx, 0, 0, this.width, this.height);
-      var cx = this.width / 2, cy = this.height / 2;
-      this.img = new janvas.Image(this.ctx, cx - this.size, cy - this.size,
+      this.background = new janvas.Rect(this.$ctx, 0, 0, this.$width, this.$height);
+      var cx = this.$width / 2, cy = this.$height / 2;
+      this.img = new janvas.Image(this.$ctx, cx - this.size, cy - this.size,
         "img/complex.svg", cx, cy, this.size * 2, this.size * 2);
       this.img.getStyle().setStrokeStyle("grey");
-      this.raf.start();
+      this.$raf.start();
     },
     update: function (ts) {
       this.img.getMatrix().setAngle(Math.PI / 2000 * ts);
+      this.scaleAnimation();
     },
     draw: function () {
-      this.background.clear(0, 0, this.width, this.height);
+      this.background.clear(0, 0, this.$width, this.$height);
       this.img.draw();
       if (this.img._mousein) this.img.stroke();
     }
@@ -29,18 +32,18 @@ var aboutWheel = new janvas.Canvas({
         this.img.lastY = this.img.getStartY();
       }
     },
-    mousemove: function () {
+    mousemove: function (ev) {
       if (this._mousedown) {
-        var mx = this.img.lastX + this.moveX, my = this.img.lastY + this.moveY;
+        var mx = this.img.lastX + ev.$moveX, my = this.img.lastY + ev.$moveY;
         this.img.init(mx, my, mx + this.size, my + this.size);
       } else {
-        this.img._mousein = this.img.isPointInPath(this.x, this.y);
+        this.img._mousein = this.img.isPointInPath(ev.$x, ev.$y);
       }
     },
     mouseup: function () {
       this._mousedown = false;
     },
-    wheel: function () {
+    wheel: function (ev) {
       /**
        * 当我们缩放一个对象的时候，有两种情况
        *   1. 中心点为 0, 0
@@ -64,10 +67,32 @@ var aboutWheel = new janvas.Canvas({
         this.img._sy * (1 - this.scale)
       );*/
       // 方式二（推荐）：
-      var targetSx = this.x + (this.img.getCenterX() - this.x) * this.scaling,
-        targetSy = this.y + (this.img.getCenterY() - this.y) * this.scaling;
-      this.img.init(targetSx - this.size, targetSy - this.size, targetSx, targetSy)
-        .getMatrix().setScale(this.scale, this.scale);
+      // var targetCx = ev.$x + (this.img.getCenterX() - ev.$x) * ev.$scaling,
+      //   targetCy = ev.$y + (this.img.getCenterY() - ev.$y) * ev.$scaling;
+      // this.img.init(targetCx - this.size, targetCy - this.size, targetCx, targetCy)
+      //   .getMatrix().setScale(ev.$scale, ev.$scale);
+      // 方式三：方式二的简单动画版本，有需求时有必要写进 components 里进行实现，以便解耦
+      this.img.lastCx = this.img.getCenterX();
+      this.img.lastCy = this.img.getCenterY();
+      this.img.targetCx = ev.$x + (this.img.getCenterX() - ev.$x) * ev.$scaling;
+      this.img.targetCy = ev.$y + (this.img.getCenterY() - ev.$y) * ev.$scaling;
+      this.img.lastScale = this.img.getMatrix().getScaleX();
+      this.img.targetScale = ev.$scale;
+      this.img.count = 0;
+      this.img.maxCount = Math.floor(300 / this.$interval);
+    }
+  },
+  functions: {
+    scaleAnimation: function () {
+      if (this.img.count <= this.img.maxCount) {
+        var lambda = this.img.count / this.img.maxCount,
+          stampCx = this.img.lastCx + (this.img.targetCx - this.img.lastCx) * lambda,
+          stampCy = this.img.lastCy + (this.img.targetCy - this.img.lastCy) * lambda,
+          scale = this.img.lastScale + (this.img.targetScale - this.img.lastScale) * lambda;
+        this.img.init(stampCx - this.size, stampCy - this.size, stampCx, stampCy)
+          .getMatrix().setScale(scale, scale);
+        this.img.count++;
+      }
     }
   }
 });

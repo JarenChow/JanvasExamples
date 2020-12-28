@@ -1,8 +1,8 @@
 var flyDots = new janvas.Canvas({
   container: "#app",
+  interval: 16,
+  times: -1,
   props: {
-    interval: 16.67,
-    times: -1,
     dots: [],
     lines: []
   },
@@ -98,8 +98,9 @@ var flyDots = new janvas.Canvas({
   },
   methods: {
     init: function () {
+      this.background = new janvas.Rect(this.$ctx, 0, 0);
       for (var i = 0; i < 100; i++) {
-        var dot = this.factory.newDot(this.width, this.height);
+        var dot = this.factory.newDot(this.$width, this.$height);
         this.dots.forEach(function (target) {
           this.lines.push(this.factory.newLine(dot, target));
         }, this);
@@ -109,9 +110,9 @@ var flyDots = new janvas.Canvas({
       this.dots.forEach(function (target) {
         this.lines.push(this.factory.newLine(this.cursor, target));
       }, this);
-      this.raf.start();
+      this.$raf.start();
     },
-    update: function (ts) {
+    update: function () {
       this.dots.forEach(function (dot) {
         dot.update();
       }, this);
@@ -120,7 +121,7 @@ var flyDots = new janvas.Canvas({
       });
     },
     draw: function () {
-      this.ctx.clearRect(0, 0, this.width, this.height);
+      this.background.clear(0, 0, this.$width, this.$height);
       this.lines.forEach(function (line) {
         line.draw();
       });
@@ -130,13 +131,13 @@ var flyDots = new janvas.Canvas({
     }
   },
   events: {
-    mousedown: function () {
+    mousedown: function (ev) {
       this.dots.forEach(function (dot) {
-        dot.closer(this.x, this.y);
+        dot.closer(ev.$x, ev.$y);
       }, this);
     },
-    mousemove: function () {
-      this.cursor.initXY(this.x, this.y);
+    mousemove: function (ev) {
+      this.cursor.initXY(ev.$x, ev.$y);
     },
     mouseup: function () {
       this.dots.forEach(function (dot) {
@@ -144,8 +145,9 @@ var flyDots = new janvas.Canvas({
       });
     },
     resize: function () {
+      this.background.setWidth(this.$width).setHeight(this.$height);
       this.dots.forEach(function (dot) {
-        dot.setBounding(this.width, this.height);
+        dot.setBounding(this.$width, this.$height);
       }, this);
     }
   }

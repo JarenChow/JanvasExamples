@@ -2,22 +2,21 @@ var clock = new janvas.Canvas({
   container: "#app",
   methods: {
     init: function () {
-      var bezier = new janvas.Bezier(this.ctx, 0, 0, [0, 0, 100, 1457, 200, -460, 300, 989, 400, 405, 500, 500]);
+      var bezier = new janvas.Bezier(this.$ctx, 0, 0, [0, 0, 100, 1457, 200, -460, 300, 989, 400, 405, 500, 500]);
       bezier.getMatrix().setScale(1 / 500, 1 / 500);
       this.animation = bezier.setTransform().getTransformedPoints().filter(function () {
         return arguments[1] % 2 === 1;
       });
-      this.background = new janvas.Rect(this.ctx); // 背景
-      this.bottom = new janvas.RoundRect(this.ctx); // 时钟底
-      this.bottom.border = new janvas.RoundRect(this.ctx);
-      this.outer = new janvas.Arc(this.ctx); // 主圆
-      this.outer.border = new janvas.Arc(this.ctx); // 主圆阴影
-      this.second = new janvas.RoundRect(this.ctx);
-      this.minute = new janvas.RoundRect(this.ctx);
-      this.hour = new janvas.RoundRect(this.ctx);
-      this.dot = new janvas.Arc(this.ctx);
+      this.background = new janvas.Rect(this.$ctx); // 背景
+      this.bottom = new janvas.RoundRect(this.$ctx); // 时钟底
+      this.bottom.border = new janvas.RoundRect(this.$ctx);
+      this.outer = new janvas.Arc(this.$ctx); // 主圆
+      this.outer.border = new janvas.Arc(this.$ctx); // 主圆阴影
+      this.second = new janvas.RoundRect(this.$ctx);
+      this.minute = new janvas.RoundRect(this.$ctx);
+      this.hour = new janvas.RoundRect(this.$ctx);
+      this.dot = new janvas.Arc(this.$ctx);
       this.initStyles();
-      this.resize();
       this.visibility(true);
     },
     initStyles: function () {
@@ -30,16 +29,16 @@ var clock = new janvas.Canvas({
       this.dot.getStyle().setStrokeStyle("hsl(0, 0%, 63%)");
     },
     resizeStyles: function () {
-      var min = Math.min(this.width, this.height);
+      var min = Math.min(this.$width, this.$height);
       this.shadow.setShadowBlur(min / 140);
       this.shadow.basis.init(min / 35, 0);
       this.gradient("hsl(0, 0%, 100%)", "hsl(0, 0%, 90%)",
         this.bottom, this.hour, this.minute, this.dot);
       this.bottom.border.getStyle().setLineWidth(min / 35);
-      this.bottom.shadow.setShadowBlur(min / 140 * 3).setShadowOffsetX(-this.width);
+      this.bottom.shadow.setShadowBlur(min / 140 * 3).setShadowOffsetX(-this.$width);
       this.gradient("hsl(0, 0%, 40%)", "hsl(0, 0%, 23%)", this.outer);
       this.outer.border.getStyle().setLineWidth(min / 35);
-      this.outer.shadow.setShadowBlur(min / 70).setShadowOffsetX(-this.width);
+      this.outer.shadow.setShadowBlur(min / 70).setShadowOffsetX(-this.$width);
       this.gradient("hsl(0, 80%, 70%)", "hsl(0, 80%, 50%)", this.second);
     },
     update: function (ts) {
@@ -64,36 +63,36 @@ var clock = new janvas.Canvas({
     },
     draw: function () {
       this.background.fill();
-      this.cfg.setShadowStyles(this.shadow);
+      this.$cfg.setShadowStyles(this.shadow);
       this.bottom.fill();
-      this.cfg.setShadowStyles(this.bottom.shadow);
+      this.$cfg.setShadowStyles(this.bottom.shadow);
       this.bottom.clip().border.stroke().restore();
-      this.cfg.resetShadowStyles();
+      this.$cfg.resetShadowStyles();
       this.outer.fill();
-      this.cfg.setShadowStyles(this.outer.shadow);
+      this.$cfg.setShadowStyles(this.outer.shadow);
       this.outer.border.stroke();
-      this.cfg.setShadowStyles(this.shadow);
+      this.$cfg.setShadowStyles(this.shadow);
       this.hour.fill();
       this.minute.fill();
       this.second.fill();
       this.dot.fill();
-      this.cfg.resetShadowStyles();
+      this.$cfg.resetShadowStyles();
       this.dot.stroke();
     }
   },
   events: {
     resize: function () {
       var goldenRatio = 0.809,
-        size = Math.min(this.width, this.height) * goldenRatio,
-        cx = this.width / 2, cy = this.height / 2;
+        size = Math.min(this.$width, this.$height) * goldenRatio,
+        cx = this.$width / 2, cy = this.$height / 2;
       this._sizeBy2 = size / 2;
-      this.background.initXY(0, 0).setWidth(this.width).setHeight(this.height);
+      this.background.initXY(0, 0).setWidth(this.$width).setHeight(this.$height);
       this.bottom.init(cx - this._sizeBy2, cy - this._sizeBy2, cx, cy)
         .setWidth(size).setHeight(size).setRadius(size / 4);
-      this.bottom.border.initXY(this.bottom.getStartX() + this.width, this.bottom.getStartY())
+      this.bottom.border.initXY(this.bottom.getStartX() + this.$width, this.bottom.getStartY())
         .setWidth(size).setHeight(size).setRadius(size / 4);
       this.outer.initXY(cx, cy).setRadius(size * goldenRatio / 2);
-      this.outer.border.initXY(cx + this.width, cy).setRadius(this.outer.getRadius());
+      this.outer.border.initXY(cx + this.$width, cy).setRadius(this.outer.getRadius());
       var offset = this.outer.getRadius() * Math.pow(goldenRatio, 18);
       this.second.init(cx - offset * 8, cy - offset, cx, cy)
         .setWidth(this.outer.getRadius() * goldenRatio + offset * 8)
@@ -112,9 +111,9 @@ var clock = new janvas.Canvas({
     visibility: function (visible) {
       if (visible) {
         this.resetTime();
-        this.raf.start();
+        this.$raf.start();
       } else {
-        this.raf.stop();
+        this.$raf.stop();
       }
     },
     onEvent: janvas.Utils.noop

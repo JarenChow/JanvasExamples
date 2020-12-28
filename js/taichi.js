@@ -1,8 +1,8 @@
 var taichi = new janvas.Canvas({
   container: "#app",
+  interval: 16.67,
+  times: -1,
   props: {
-    interval: 16.67,
-    times: -1,
     addCount: 0,
     taichi: []
   },
@@ -141,8 +141,8 @@ var taichi = new janvas.Canvas({
   },
   methods: {
     init: function () {
-      this.background = new janvas.Rect(this.ctx, 0, 0, this.width, this.height);
-      this.raf.start();
+      this.background = new janvas.Rect(this.$ctx, 0, 0, this.$width, this.$height);
+      this.$raf.start();
     },
     update: function (ts) {
       if (ts > this.addCount * 1000) {
@@ -164,29 +164,29 @@ var taichi = new janvas.Canvas({
       });
     },
     draw: function () {
-      this.background.clear(0, 0, this.width, this.height);
+      this.background.clear(0, 0, this.$width, this.$height);
       this.taichi.forEach(function (tc) {
         tc.draw();
       });
     }
   },
   events: {
-    mousedown: function () {
-      this.add(this.x, this.y);
+    mousedown: function (ev) {
+      this.add(ev.$x, ev.$y);
     },
     visibility: function (visible) {
-      if (visible) this.raf.resume();
-      else this.raf.pause();
+      if (visible) this.$raf.resume();
+      else this.$raf.pause();
     },
     resize: function () {
-      this.background.setWidth(this.width).setHeight(this.height);
+      this.background.setWidth(this.$width).setHeight(this.$height);
     }
   },
   functions: {
     add: function (x, y) {
       this.taichi.push(this.factory.createTaichi(
-        x || janvas.Utils.randInt(0, this.width),
-        y || janvas.Utils.randInt(0, this.height),
+        x || janvas.Utils.randInt(0, this.$width),
+        y || janvas.Utils.randInt(0, this.$height),
         janvas.Utils.randInt(20, 100)
       ));
     }

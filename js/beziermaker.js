@@ -1,8 +1,8 @@
 var bezierMaker = new janvas.Canvas({
   container: "#app",
+  interval: 16,
+  times: -1,
   props: {
-    interval: 16,
-    times: -1,
     position: 0, // 指示器运行位置
     size: Math.floor(10000 / 16) // 10000ms/16ms，10秒运行次数
   },
@@ -84,22 +84,21 @@ var bezierMaker = new janvas.Canvas({
   },
   methods: {
     init: function () {
-      this.background = new janvas.Rect(this.ctx, 0, 0, this.width, this.height);
+      this.background = new janvas.Rect(this.$ctx, 0, 0, this.$width, this.$height);
       this.dots = [];
-      this.polyline = new janvas.Polyline(this.ctx, 0, 0, []);
-      this.bezier = new janvas.Bezier(this.ctx, 0, 0, this.polyline.getPoints(), this.size * 2);
+      this.polyline = new janvas.Polyline(this.$ctx, 0, 0, []);
+      this.bezier = new janvas.Bezier(this.$ctx, 0, 0, this.polyline.getPoints(), this.size * 2);
       this.bezier.getStyle().setStrokeStyle("hsl(0, 80%, 50%)");
-      this.transformedPoints = this.bezier.setTransform().getTransformedPoints();
-      this.hint = new janvas.Text(this.ctx, 0, 0, "");
+      this.transformedPoints = this.bezier.getTransformedPoints();
+      this.hint = new janvas.Text(this.$ctx, 0, 0, "");
       this.hint.getStyle().setFillStyle("rgba(0, 0, 0, 0.5)")
         .setFont("12px sans-serif").setTextAlign("end").setTextBaseline("middle");
-      this.cursor = new janvas.ArrowHead(this.ctx, 0, 0);
+      this.cursor = new janvas.ArrowHead(this.$ctx, 0, 0);
       this.cursor.getStyle().setFillStyle("hsl(270, 80%, 50%)");
-      this.raf.start();
+      this.$raf.start();
     },
-    update: janvas.Utils.noop,
     draw: function () {
-      this.background.clear(0, 0, this.width, this.height);
+      this.background.clear(0, 0, this.$width, this.$height);
       this.polyline.stroke();
       this.bezier.stroke();
       this.dots.forEach(function (dot) {
@@ -112,15 +111,16 @@ var bezierMaker = new janvas.Canvas({
   },
   events: {
     mousedown: function (ev) {
+      if(!this.$raf.isRunning()) return this.$raf.resume();
       if (this._autoResize) {
         var _dispatch;
-        if (this.x > this.width * 0.875) _dispatch = this.container.style.width = this.width * 1.5 + "px";
-        if (this.y > this.height * 0.875) _dispatch = this.container.style.height = this.height * 1.5 + "px";
+        if (ev.$x > this.$width * 0.875) _dispatch = this.$wrapper.style.width = this.$width * 1.5 + "px";
+        if (ev.$y > this.$height * 0.875) _dispatch = this.$wrapper.style.height = this.$height * 1.5 + "px";
         if (_dispatch) dispatchEvent(new Event("resize"));
         // if (_dispatch) {
-        //   var evt = document.createEvent("Event");
-        //   evt.initEvent("resize", true, true);
-        //   dispatchEvent(evt);
+        //   var ev = document.createEvent("Event");
+        //   ev.initEvent("resize", true, true);
+        //   dispatchEvent(ev);
         // }
       }
       if (ev.buttons === 4) {
@@ -134,8 +134,8 @@ var bezierMaker = new janvas.Canvas({
           this.toggleLocked(this.current);
         } else {
           if (this.locked) this.locked.highlight(false);
-          this.dots.push(this.locked = this.current = this.factory.newDot(this.x, this.y));
-          this.polyline.insert(this.x, this.y);
+          this.dots.push(this.locked = this.current = this.factory.newDot(ev.$x, ev.$y));
+          this.polyline.insert(ev.$x, ev.$y);
         }
         this.locked.mark();
       }
@@ -143,17 +143,17 @@ var bezierMaker = new janvas.Canvas({
     mousemove: function (ev) {
       if (ev.buttons === 2) { // 鼠标右键
         this.dots.forEach(function (dot) {
-          dot.onmove(this.moveX, this.moveY);
+          dot.onmove(ev.$moveX, ev.$moveY);
           this.polyline.update(dot.getX(), dot.getY(), dot.getIndex());
         }, this);
       } else if (ev.buttons === 1) { // 鼠标左键
-        this.locked.onmove(this.moveX, this.moveY);
+        this.locked.onmove(ev.$moveX, ev.$moveY);
         this.polyline.update(this.locked.getX(), this.locked.getY(), this.locked.getIndex());
       } else { // 无按键，默认行为
         if (this.current) this.current.highlight(false);
         this.current = void (0);
         this.dots.forEach(function (dot) {
-          if (dot.isPointInPath(this.x, this.y)) this.current = dot;
+          if (dot.isPointInPath(ev.$x, ev.$y)) this.current = dot;
         }, this);
         if (this.current) {
           this.locked.highlight(false);
@@ -162,12 +162,13 @@ var bezierMaker = new janvas.Canvas({
           if (this.locked) this.locked.highlight(true);
         }
       }
-      this.hint.initXY(this.x, this.y).setText("(" + this.x + "," + this.y + ")");
+      this.hint.initXY(ev.$x, ev.$y).setText("(" + ev.$x + "," + ev.$y + ")");
     },
     keydown: function (ev) {
       if (this.locked === void (0)) return;
+      ev.preventDefault();
       var increase = ev.repeat ? 5 : 1;
-      switch (this.key) {
+      switch (ev.key) {
         case "ArrowUp":
         case "w":
           this.locked.initXY(this.locked.getX(), this.locked.getY() - increase);
@@ -214,16 +215,13 @@ var bezierMaker = new janvas.Canvas({
       }
     },
     resize: function () {
-      this.background.setWidth(this.width).setHeight(this.height);
+      this.background.setWidth(this.$width).setHeight(this.$height);
     },
     autoResize: function (flag) {
       this._autoResize = flag;
     },
     blur: function () {
-      this.raf.pause();
-    },
-    focus: function () {
-      this.raf.resume();
+      this.$raf.pause();
     }
   },
   functions: {
@@ -248,3 +246,4 @@ var bezierMaker = new janvas.Canvas({
     }
   }
 });
+bezierMaker.autoResize(true);
