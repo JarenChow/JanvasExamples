@@ -45,7 +45,6 @@ var coordinate = new janvas.Canvas({
       this.adjustLength(Math.floor(this.$width / this._span - 0.2), this.xTexts, this.xLines, true);
       this.adjustLength(Math.floor(this.$height / this._span - 0.2), this.yTexts, this.yLines, false);
       this.setStyles();
-      this.draw();
     }
   },
   functions: {

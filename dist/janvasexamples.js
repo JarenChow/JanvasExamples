@@ -52,7 +52,6 @@ function coordinate(container) {
       this.adjustLength(Math.floor(this.$width / this._span - 0.2), this.xTexts, this.xLines, true);
       this.adjustLength(Math.floor(this.$height / this._span - 0.2), this.yTexts, this.yLines, false);
       this.setStyles();
-      this.draw();
     }
   },
   functions: {
@@ -817,7 +816,8 @@ function beziermaker(container) {
   times: -1,
   props: {
     position: 0, // 指示器运行位置
-    size: Math.floor(10000 / 16) // 10000ms/16ms，10秒运行次数
+    size: Math.floor(10000 / 16), // 10000ms/16ms，10秒运行次数
+    keys: ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Delete", "Enter", "w", "s", "a", "d", "q", "e"]
   },
   components: {
     factory: (function () {
@@ -924,12 +924,12 @@ function beziermaker(container) {
   },
   events: {
     mousedown: function (ev) {
-      if(!this.$raf.isRunning()) return this.$raf.resume();
+      if (!this.$raf.isRunning()) return;
       if (this._autoResize) {
-        var _dispatch;
-        if (ev.$x > this.$width * 0.875) _dispatch = this.$wrapper.style.width = this.$width * 1.5 + "px";
-        if (ev.$y > this.$height * 0.875) _dispatch = this.$wrapper.style.height = this.$height * 1.5 + "px";
-        if (_dispatch) dispatchEvent(new Event("resize"));
+        // var _dispatch;
+        if (ev.$x > this.$width * 0.875) this._wrapper.style.width = this.$width * 1.5 + "px";
+        if (ev.$y > this.$height * 0.875) this._wrapper.style.height = this.$height * 1.5 + "px";
+        // if (_dispatch) dispatchEvent(new Event("resize"));
         // if (_dispatch) {
         //   var ev = document.createEvent("Event");
         //   ev.initEvent("resize", true, true);
@@ -954,6 +954,7 @@ function beziermaker(container) {
       }
     },
     mousemove: function (ev) {
+      if (!this.$raf.isRunning()) return;
       if (ev.buttons === 2) { // 鼠标右键
         this.dots.forEach(function (dot) {
           dot.onmove(ev.$moveX, ev.$moveY);
@@ -977,9 +978,14 @@ function beziermaker(container) {
       }
       this.hint.initXY(ev.$x, ev.$y).setText("(" + ev.$x + "," + ev.$y + ")");
     },
+    mouseup: function () {
+      if (!this.$raf.isRunning()) this.$raf.resume();
+    },
     keydown: function (ev) {
       if (this.locked === void (0)) return;
-      ev.preventDefault();
+      if (this.keys.some(function (value) {
+        return value === ev.key;
+      })) ev.preventDefault();
       var increase = ev.repeat ? 5 : 1;
       switch (ev.key) {
         case "ArrowUp":

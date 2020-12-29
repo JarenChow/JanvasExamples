@@ -5,12 +5,12 @@ Examples created with [janvas](https://github.com/jarenchow/janvas).
 ## 使用示例
 
 - 方式一
-  1. 准备一个容器 div：`<div id="app"></div>`
+  1. 准备一个容器 div：`<div id="app" style="width: 100%;height: 100%;"></div>`
   2. 添加 janvas 库：`<script src="https://cdn.jsdelivr.net/npm/janvas/dist/janvas.min.js"></script>`
   3. 添加 janvasexamples 库：`<script src="https://cdn.jsdelivr.net/npm/janvasexamples/dist/janvasexamples.min.js"></script>`
   4. 填充 div：`var fly = janvasexamples.flydots("#app")`
 - 方式二（在 [vue](https://github.com/vuejs/vue) 中使用）
-  1. 准备一个容器 div：`<div ref="container"></div>`
+  1. 准备一个容器 div：`<div ref="container" style="width: 100%;height: 100%;"></div>`
   2. `npm install janvasexamples --save`
   3. 填充 div：`var fly = janvasexamples.flydots(this.$refs.container);`
 
