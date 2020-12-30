@@ -663,7 +663,6 @@ function clock(container) {
       this.hour = new janvas.RoundRect(this.$ctx);
       this.dot = new janvas.Arc(this.$ctx);
       this.initStyles();
-      this.visibility(true);
     },
     initStyles: function () {
       this.shadow = new janvas.ShadowStyle().setShadowColor("hsla(0, 0%, 0%, 0.8)");
@@ -927,8 +926,8 @@ function beziermaker(container) {
       if (!this.$raf.isRunning()) return;
       if (this._autoResize) {
         // var _dispatch;
-        if (ev.$x > this.$width * 0.875) this._wrapper.style.width = this.$width * 1.5 + "px";
-        if (ev.$y > this.$height * 0.875) this._wrapper.style.height = this.$height * 1.5 + "px";
+        if (ev.$x > this.$width * 0.875) this.$wrapper.style.width = this.$width * 1.5 + "px";
+        if (ev.$y > this.$height * 0.875) this.$wrapper.style.height = this.$height * 1.5 + "px";
         // if (_dispatch) dispatchEvent(new Event("resize"));
         // if (_dispatch) {
         //   var ev = document.createEvent("Event");

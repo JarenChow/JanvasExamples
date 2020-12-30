@@ -17,7 +17,6 @@ var clock = new janvas.Canvas({
       this.hour = new janvas.RoundRect(this.$ctx);
       this.dot = new janvas.Arc(this.$ctx);
       this.initStyles();
-      this.visibility(true);
     },
     initStyles: function () {
       this.shadow = new janvas.ShadowStyle().setShadowColor("hsla(0, 0%, 0%, 0.8)");
