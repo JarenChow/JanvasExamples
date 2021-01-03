@@ -1,7 +1,6 @@
 var bezierMaker = new janvas.Canvas({
   container: "#app",
   interval: 16,
-  times: -1,
   props: {
     position: 0, // 指示器运行位置
     size: Math.floor(10000 / 16), // 10000ms/16ms，10秒运行次数
@@ -112,7 +111,6 @@ var bezierMaker = new janvas.Canvas({
   },
   events: {
     mousedown: function (ev) {
-      if (!this.$raf.isRunning()) return;
       if (this._autoResize) {
         // var _dispatch;
         if (ev.$x > this.$width * 0.875) this.$wrapper.style.width = this.$width * 1.5 + "px";
@@ -142,7 +140,6 @@ var bezierMaker = new janvas.Canvas({
       }
     },
     mousemove: function (ev) {
-      if (!this.$raf.isRunning()) return;
       if (ev.buttons === 2) { // 鼠标右键
         this.dots.forEach(function (dot) {
           dot.onmove(ev.$moveX, ev.$moveY);
@@ -166,8 +163,11 @@ var bezierMaker = new janvas.Canvas({
       }
       this.hint.initXY(ev.$x, ev.$y).setText("(" + ev.$x + "," + ev.$y + ")");
     },
-    mouseup: function () {
-      if (!this.$raf.isRunning()) this.$raf.resume();
+    mouseover: function () {
+      this.$raf.resume();
+    },
+    mouseout: function () {
+      this.$raf.pause();
     },
     keydown: function (ev) {
       if (this.locked === void (0)) return;
@@ -226,9 +226,6 @@ var bezierMaker = new janvas.Canvas({
     },
     autoResize: function (flag) {
       this._autoResize = flag;
-    },
-    blur: function () {
-      this.$raf.pause();
     }
   },
   functions: {

@@ -364,8 +364,7 @@ function antv(container) {
 function taichi(container) {
   return new janvas.Canvas({
   container: container,
-  interval: 16.67,
-  times: -1,
+  interval: 16,
   props: {
     addCount: 0,
     taichi: []
@@ -812,7 +811,6 @@ function beziermaker(container) {
   return new janvas.Canvas({
   container: container,
   interval: 16,
-  times: -1,
   props: {
     position: 0, // 指示器运行位置
     size: Math.floor(10000 / 16), // 10000ms/16ms，10秒运行次数
@@ -923,7 +921,6 @@ function beziermaker(container) {
   },
   events: {
     mousedown: function (ev) {
-      if (!this.$raf.isRunning()) return;
       if (this._autoResize) {
         // var _dispatch;
         if (ev.$x > this.$width * 0.875) this.$wrapper.style.width = this.$width * 1.5 + "px";
@@ -953,7 +950,6 @@ function beziermaker(container) {
       }
     },
     mousemove: function (ev) {
-      if (!this.$raf.isRunning()) return;
       if (ev.buttons === 2) { // 鼠标右键
         this.dots.forEach(function (dot) {
           dot.onmove(ev.$moveX, ev.$moveY);
@@ -977,8 +973,11 @@ function beziermaker(container) {
       }
       this.hint.initXY(ev.$x, ev.$y).setText("(" + ev.$x + "," + ev.$y + ")");
     },
-    mouseup: function () {
-      if (!this.$raf.isRunning()) this.$raf.resume();
+    mouseover: function () {
+      this.$raf.resume();
+    },
+    mouseout: function () {
+      this.$raf.pause();
     },
     keydown: function (ev) {
       if (this.locked === void (0)) return;
@@ -1037,9 +1036,6 @@ function beziermaker(container) {
     },
     autoResize: function (flag) {
       this._autoResize = flag;
-    },
-    blur: function () {
-      this.$raf.pause();
     }
   },
   functions: {
@@ -1071,7 +1067,6 @@ function flydots(container) {
   return new janvas.Canvas({
   container: container,
   interval: 16,
-  times: -1,
   props: {
     dots: [],
     lines: []
@@ -1228,7 +1223,6 @@ function aboutwheel(container) {
   return new janvas.Canvas({
   container: container,
   interval: 16,
-  times: -1,
   props: {
     size: 50
   },

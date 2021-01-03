@@ -1,7 +1,6 @@
 var flyDots = new janvas.Canvas({
   container: "#app",
   interval: 16,
-  times: -1,
   props: {
     dots: [],
     lines: []

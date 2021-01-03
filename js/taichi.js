@@ -1,7 +1,6 @@
 var taichi = new janvas.Canvas({
   container: "#app",
-  interval: 16.67,
-  times: -1,
+  interval: 16,
   props: {
     addCount: 0,
     taichi: []
