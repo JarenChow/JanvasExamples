@@ -57,8 +57,8 @@ var flyDots = new janvas.Canvas({
           this._x += this._vx;
           this._y += this._vy;
           this.initXY(this._x, this._y);
-          if (this._x < this._left || this._x > this._right) this._vx *= -1;
-          if (this._y < this._top || this._y > this._bottom) this._vy *= -1;
+          if (this._x < this._left || this._x > this._right) this._lvx = this._vx *= -1;
+          if (this._y < this._top || this._y > this._bottom) this._lvy = this._vy *= -1;
         },
         draw: function () {
           this.arc.fill();
@@ -148,6 +148,9 @@ var flyDots = new janvas.Canvas({
       this.dots.forEach(function (dot) {
         dot.setBounding(this.$width, this.$height);
       }, this);
+    },
+    visibility: function (visible) {
+      visible ? this.$raf.resume() : this.$raf.pause();
     }
   }
 });

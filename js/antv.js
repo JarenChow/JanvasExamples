@@ -250,6 +250,7 @@ var antv = new janvas.Canvas({
       this.draw();
     },
     wheel: function (ev) {
+      ev.preventDefault();
       this.nodes.forEach(function (node) {
         node.wheel(ev.$x, ev.$y, ev.$scaling, ev.$scale)
       }, this);
@@ -263,4 +264,11 @@ var antv = new janvas.Canvas({
       this.background.setWidth(this.$width).setHeight(this.$height);
     }
   }
+});
+// 原示例：https://g6.antv.vision/zh/examples/performance/perf#moreData
+fetch("https://gw.alipayobjects.com/os/bmw-prod/f1565312-d537-4231-adf5-81cb1cd3a0e8.json")
+  .then(function (res) {
+    return res.json();
+  }).then(function (res) {
+  antv.data(res);
 });

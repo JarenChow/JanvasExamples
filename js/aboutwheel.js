@@ -11,6 +11,8 @@ var aboutWheel = new janvas.Canvas({
       this.img = new janvas.Image(this.$ctx, cx - this.size, cy - this.size,
         "img/complex.svg", cx, cy, this.size * 2, this.size * 2);
       this.img.getStyle().setStrokeStyle("grey");
+      this.img.animationQueue = []; // 动画队列
+      this.img.count = this.img.maxCount = Math.floor(256 / this.$interval);
       this.$raf.start();
     },
     update: function (ts) {
@@ -71,26 +73,30 @@ var aboutWheel = new janvas.Canvas({
       // this.img.init(targetCx - this.size, targetCy - this.size, targetCx, targetCy)
       //   .getMatrix().setScale(ev.$scale, ev.$scale);
       // 方式三：方式二的简单动画版本，有需求时有必要写进 components 里进行实现，以便解耦
-      this.img.lastCx = this.img.getCenterX();
-      this.img.lastCy = this.img.getCenterY();
-      this.img.targetCx = ev.$x + (this.img.getCenterX() - ev.$x) * ev.$scaling;
-      this.img.targetCy = ev.$y + (this.img.getCenterY() - ev.$y) * ev.$scaling;
-      this.img.lastScale = this.img.getMatrix().getScaleX();
-      this.img.targetScale = ev.$scale;
-      this.img.count = 0;
-      this.img.maxCount = Math.floor(300 / this.$interval);
+      ev.preventDefault();
+      if (ev.$scaling !== 1) this.img.animationQueue.unshift(ev);
     }
   },
   functions: {
     scaleAnimation: function () {
-      if (this.img.count <= this.img.maxCount) {
+      if (this.img.animationQueue.length && this.img.count === this.img.maxCount) {
+        var ev = this.img.animationQueue.pop();
+        this.img.lastCx = this.img.getCenterX();
+        this.img.lastCy = this.img.getCenterY();
+        this.img.targetCx = ev.$x + (this.img.getCenterX() - ev.$x) * ev.$scaling;
+        this.img.targetCy = ev.$y + (this.img.getCenterY() - ev.$y) * ev.$scaling;
+        this.img.lastScale = ev.$lastScale;
+        this.img.targetScale = ev.$scale;
+        this.img.count = 0;
+      }
+      if (this.img.count < this.img.maxCount) {
+        this.img.count++;
         var lambda = this.img.count / this.img.maxCount,
           stampCx = this.img.lastCx + (this.img.targetCx - this.img.lastCx) * lambda,
           stampCy = this.img.lastCy + (this.img.targetCy - this.img.lastCy) * lambda,
           scale = this.img.lastScale + (this.img.targetScale - this.img.lastScale) * lambda;
         this.img.init(stampCx - this.size, stampCy - this.size, stampCx, stampCy)
           .getMatrix().setScale(scale, scale);
-        this.img.count++;
       }
     }
   }
