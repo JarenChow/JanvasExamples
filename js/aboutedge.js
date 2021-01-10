@@ -27,7 +27,7 @@ var aboutEdge = new janvas.Canvas({
     draw: function () {
       this.background.clear(0, 0, this.$width, this.$height);
       this.edge.stroke();
-      if (this.edge.lambdaInRange()) {
+      if (this.edge.ratioInRange()) {
         var an = this.edge.getLineAngle();
         this.text.getMatrix().setAngle(an > -Math.PI / 2 && an < Math.PI / 2 ? an : an + Math.PI);
         this.text.init(this.edge.getTargetX(), this.edge.getTargetY(),

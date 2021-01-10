@@ -74,14 +74,14 @@ var flyDots = new janvas.Canvas({
 
       Line.prototype = {
         update: function () {
-          var _lambda = 255 - janvas.Utils.pythagorean(
+          var _ratio = 255 - janvas.Utils.pythagorean(
             this.line.getStartX() - this.line.getEndX(),
             this.line.getStartY() - this.line.getEndY()) / 100 * 255;
-          this._lambda = _lambda < 0 ? 0 : _lambda;
-          this.line.getStyle().setStrokeStyle(this._rgb.setAlpha(this._lambda).toRgbString(true));
+          this._ratio = _ratio < 0 ? 0 : _ratio;
+          this.line.getStyle().setStrokeStyle(this._rgb.setAlpha(this._ratio).toRgbString(true));
         },
         draw: function () {
-          if (this._lambda) this.line.stroke();
+          if (this._ratio) this.line.stroke();
         }
       };
 

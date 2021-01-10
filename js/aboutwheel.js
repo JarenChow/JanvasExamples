@@ -91,10 +91,10 @@ var aboutWheel = new janvas.Canvas({
       }
       if (this.img.count < this.img.maxCount) {
         this.img.count++;
-        var lambda = this.img.count / this.img.maxCount,
-          stampCx = this.img.lastCx + (this.img.targetCx - this.img.lastCx) * lambda,
-          stampCy = this.img.lastCy + (this.img.targetCy - this.img.lastCy) * lambda,
-          scale = this.img.lastScale + (this.img.targetScale - this.img.lastScale) * lambda;
+        var ratio = this.img.count / this.img.maxCount,
+          stampCx = this.img.lastCx + (this.img.targetCx - this.img.lastCx) * ratio,
+          stampCy = this.img.lastCy + (this.img.targetCy - this.img.lastCy) * ratio,
+          scale = this.img.lastScale + (this.img.targetScale - this.img.lastScale) * ratio;
         this.img.init(stampCx - this.size, stampCy - this.size, stampCx, stampCy)
           .getMatrix().setScale(scale, scale);
       }

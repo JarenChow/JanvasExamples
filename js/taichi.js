@@ -22,7 +22,7 @@ var taichi = new janvas.Canvas({
         this.x = x;
         this.y = y;
         this.r = r;
-        this.rotateSpeed = janvas.Utils.randSign() * Math.PI / 2000 * 16.67 * 42 / r;
+        this.rotateSpeed = janvas.Utils.randSign() * Math.PI / 2000 * 16 * 42 / r;
         this.cp = new janvas.Point();
         this.outer = outer;
         this.left = left;
@@ -36,8 +36,8 @@ var taichi = new janvas.Canvas({
           outerStart: new janvas.Rgb(255, 255, 255).sRgbInverseCompanding(),
           black: new janvas.Rgb(0, 0, 0).sRgbInverseCompanding(),
           white: new janvas.Rgb(255, 255, 255).sRgbInverseCompanding(),
-          lambda: 0,
-          lambdaMax: Math.ceil(1000 / 16.67)
+          count: 0,
+          maxCount: Math.ceil(1000 / 16)
         };
       }
 
@@ -80,19 +80,17 @@ var taichi = new janvas.Canvas({
         },
         gradient: function () {
           var grd = this.grd;
-          if (grd.lambda < grd.lambdaMax) {
-            var lambda = grd.lambda / grd.lambdaMax;
-            this.outer.getStyle().setStrokeStyle(
-              grd.rgb.sRgbMarksGammaMixing(grd.outerStart, grd.black, lambda)
-                .sRgbCompanding().toRgbString()
-            );
-            this._grd(this.left, grd.white, grd.black, lambda);
+          if (grd.count < grd.maxCount) {
+            var ratio = grd.count / grd.maxCount;
+            janvas.Rgb.sRgbGammaMixing(grd.outerStart, grd.black, ratio, grd.rgb);
+            this.outer.getStyle().setStrokeStyle(grd.rgb.sRgbCompanding().toRgbString());
+            this._grd(this.left, grd.white, grd.black, ratio);
             this.top.getStyle().setFillStyle(this.left.getStyle().getFillStyle());
             this.bottomSmall.getStyle().setFillStyle(this.left.getStyle().getFillStyle());
-            this._grd(this.right, grd.black, grd.white, lambda);
+            this._grd(this.right, grd.black, grd.white, ratio);
             this.bottom.getStyle().setFillStyle(this.right.getStyle().getFillStyle());
             this.topSmall.getStyle().setFillStyle(this.right.getStyle().getFillStyle());
-            grd.lambda++;
+            grd.count++;
             return true;
           } else {
             this.outer.getStyle().setStrokeStyle(janvas.FillStrokeStyle.DEFAULT_STROKE_STYLE);
@@ -105,11 +103,9 @@ var taichi = new janvas.Canvas({
             return false;
           }
         },
-        _grd: function (obj, start, end, lambda) {
-          obj.getStyle().setFillStyle(
-            this.grd.rgb.sRgbMarksGammaMixing(start, end, lambda)
-              .sRgbCompanding().toRgbString()
-          );
+        _grd: function (obj, start, end, ratio) {
+          janvas.Rgb.sRgbGammaMixing(start, end, ratio, this.grd.rgb);
+          obj.getStyle().setFillStyle(this.grd.rgb.sRgbCompanding().toRgbString());
         },
         collide: function (taichi) {
           var x1 = this.x, y1 = this.y, r1 = this.r * 17 / 16, // 添加了 outer linewidth 的一半
