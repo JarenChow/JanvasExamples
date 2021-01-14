@@ -58,3 +58,13 @@ Examples created with [janvas](https://github.com/jarenchow/janvas).
 ## [AboutEdge](https://jarenchow.github.io/JanvasExamples/html/about_edge.html)
 
 v2.1.0 新增绘制连线的 Edge 类，实现了图数据库中的连线的样式。
+
+## [CircleText](https://jarenchow.github.io/JanvasExamples/html/circletext.html)
+
+**janvas** v2.6.1 新增数十个 janvas.Utils.$ease 默认动效函数。
+
+## [CodeRain](https://jarenchow.github.io/JanvasExamples/html/coderain.html)
+
+基于 **janvas** 编写 *161* 行代码几乎 100% 还原 The Matrix 特效代码雨。
+
+可以使用 `janvasexamples.coderain(document.body).$canvas.style.zIndex = "-1"` 来为自己的网页添加此特效。
