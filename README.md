@@ -67,4 +67,4 @@ v2.1.0 新增绘制连线的 Edge 类，实现了图数据库中的连线的样�
 
 基于 **janvas** 编写 *161* 行代码几乎 100% 还原 The Matrix 特效代码雨。
 
-可以使用 `janvasexamples.coderain(document.body).$canvas.style.zIndex = "-1"` 来为自己的网页添加此特效。
+可以使用 `janvasexamples.coderain(document.body).$canvas.style.zIndex = "-1";` 来为自己的网页添加此特效。

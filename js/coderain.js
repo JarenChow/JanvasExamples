@@ -3,7 +3,7 @@ var matrixCodeRain = new janvas.Canvas({
   interval: 50,
   props: {
     chars: [], // can define your own string array
-    fontSize: 16,
+    fontSize: 0, // can define your own preferred font size
     colors: {
       head: "rgb(255, 255, 255)",
       tail: "rgb(0, 255, 0)",
