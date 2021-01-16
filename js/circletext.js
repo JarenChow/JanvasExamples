@@ -1,4 +1,4 @@
-var curvedText = new janvas.Canvas({
+var circleText = new janvas.Canvas({
   container: "#app",
   duration: 2000,
   props: {
