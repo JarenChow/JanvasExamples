@@ -1,4 +1,4 @@
-// https://github.com/JarenChow/Janvas Created by JarenChow in 2020 janvas.js v1.2.6
+// https://github.com/JarenChow/Janvas Created by JarenChow in 2020 janvas.js v1.2.7
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('janvas')) :
     typeof define === 'function' && define.amd ? define(['janvas'], factory) :
@@ -1749,7 +1749,7 @@ function coderain(container) {
     init: function () {
       this._initChars();
       this._initColors();
-      this.fontSize = this.fontSize || Math.ceil(this.$width * this.$dpr / 120);
+      this.fontSize = this.fontSize || Math.ceil(this.$width / 120);
       this.font = "bold " + this.fontSize + "px sans-serif";
       this.offsetY = janvas.Utils.measureTextWidth("M", this.font);
       this.halfY = this.offsetY / 2;

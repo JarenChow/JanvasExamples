@@ -1,6 +1,6 @@
 {
   "name": "janvasexamples",
-  "version": "1.2.6",
+  "version": "1.2.7",
   "description": "Examples created with janvas.",
   "main": "dist/janvasexamples.min.js",
   "scripts": {
