@@ -17,7 +17,7 @@ var codeRain = new janvas.Canvas({
     init: function () {
       this._initChars();
       this._initColors();
-      this.fontSize = this.fontSize || Math.ceil(this.$width / 120);
+      this.fontSize = this.fontSize || Math.ceil(this.$width * this.$dpr / 120);
       this.font = "bold " + this.fontSize + "px sans-serif";
       this.offsetY = janvas.Utils.measureTextWidth("M", this.font);
       this.halfY = this.offsetY / 2;

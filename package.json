@@ -21,7 +21,7 @@
   "author": "JarenChow",
   "license": "MIT",
   "dependencies": {
-    "janvas": "2.6.3"
+    "janvas": "2.6.4"
   },
   "bugs": {
     "url": "https://github.com/JarenChow/JanvasExamples/issues"
