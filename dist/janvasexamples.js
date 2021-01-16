@@ -1,3 +1,4 @@
+// https://github.com/JarenChow/Janvas Created by JarenChow in 2020 janvas.js v1.2.6
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('janvas')) :
     typeof define === 'function' && define.amd ? define(['janvas'], factory) :
