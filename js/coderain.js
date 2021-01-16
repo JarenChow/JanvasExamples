@@ -150,9 +150,8 @@ var codeRain = new janvas.Canvas({
     }
   },
   events: {
-    visibility: function (visible) {
+    visibilitychange: function (visible) {
       visible ? this.$raf.resume() : this.$raf.pause();
-      console.log(visible);
     }
   },
   functions: {

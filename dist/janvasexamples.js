@@ -1,3 +1,4 @@
+// https://github.com/JarenChow/Janvas Created by JarenChow in 2020 janvas.js v1.2.5
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('janvas')) :
     typeof define === 'function' && define.amd ? define(['janvas'], factory) :
@@ -509,7 +510,6 @@ function taichi(container) {
   methods: {
     init: function () {
       this.background = new janvas.Rect(this.$ctx, 0, 0, this.$width, this.$height);
-      this.$raf.start();
     },
     update: function (ts) {
       if (ts > this.addCount * 1000) {
@@ -541,9 +541,8 @@ function taichi(container) {
     mousedown: function (ev) {
       this.add(ev.$x, ev.$y);
     },
-    visibility: function (visible) {
-      if (visible) this.$raf.resume();
-      else this.$raf.pause();
+    visibilitychange: function (visible) {
+      visible ? this.$raf.resume() : this.$raf.pause();
     },
     resize: function () {
       this.background.setWidth(this.$width).setHeight(this.$height);
@@ -1002,7 +1001,7 @@ function clock(container) {
       this.dot.initXY(cx, cy).setRadius(offset / Math.pow(goldenRatio, 2));
       this.resizeStyles();
     },
-    visibility: function (visible) {
+    visibilitychange: function (visible) {
       if (visible) {
         this.resetTime();
         this.$raf.start();
@@ -1155,7 +1154,6 @@ function beziermaker(container) {
         .setFont("12px sans-serif").setTextAlign("end").setTextBaseline("middle");
       this.cursor = new janvas.ArrowHead(this.$ctx, 0, 0);
       this.cursor.getStyle().setFillStyle("hsl(270, 80%, 50%)");
-      this.$raf.start();
     },
     draw: function () {
       this.background.clear(0, 0, this.$width, this.$height);
@@ -1425,7 +1423,6 @@ function flydots(container) {
       this.dots.forEach(function (target) {
         this.lines.push(this.factory.newLine(this.cursor, target));
       }, this);
-      this.$raf.start();
     },
     update: function () {
       this.dots.forEach(function (dot) {
@@ -1465,7 +1462,7 @@ function flydots(container) {
         dot.setBounding(this.$width, this.$height);
       }, this);
     },
-    visibility: function (visible) {
+    visibilitychange: function (visible) {
       visible ? this.$raf.resume() : this.$raf.pause();
     }
   }
@@ -1488,7 +1485,7 @@ function aboutwheel(container) {
       this.img.getStyle().setStrokeStyle("grey");
       this.img.animationQueue = []; // 动画队列
       this.img.count = this.img.maxCount = Math.floor(256 / this.$interval);
-      this.$raf.start();
+      this.$raf.resume();
     },
     update: function (ts) {
       this.img.getMatrix().setAngle(Math.PI / 2000 * ts);
@@ -1885,9 +1882,8 @@ function coderain(container) {
     }
   },
   events: {
-    visibility: function (visible) {
+    visibilitychange: function (visible) {
       visible ? this.$raf.resume() : this.$raf.pause();
-      console.log(visible);
     }
   },
   functions: {

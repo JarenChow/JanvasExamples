@@ -95,7 +95,6 @@ var bezierMaker = new janvas.Canvas({
         .setFont("12px sans-serif").setTextAlign("end").setTextBaseline("middle");
       this.cursor = new janvas.ArrowHead(this.$ctx, 0, 0);
       this.cursor.getStyle().setFillStyle("hsl(270, 80%, 50%)");
-      this.$raf.start();
     },
     draw: function () {
       this.background.clear(0, 0, this.$width, this.$height);

@@ -109,7 +109,6 @@ var flyDots = new janvas.Canvas({
       this.dots.forEach(function (target) {
         this.lines.push(this.factory.newLine(this.cursor, target));
       }, this);
-      this.$raf.start();
     },
     update: function () {
       this.dots.forEach(function (dot) {
@@ -149,7 +148,7 @@ var flyDots = new janvas.Canvas({
         dot.setBounding(this.$width, this.$height);
       }, this);
     },
-    visibility: function (visible) {
+    visibilitychange: function (visible) {
       visible ? this.$raf.resume() : this.$raf.pause();
     }
   }

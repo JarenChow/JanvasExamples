@@ -137,7 +137,6 @@ var taichi = new janvas.Canvas({
   methods: {
     init: function () {
       this.background = new janvas.Rect(this.$ctx, 0, 0, this.$width, this.$height);
-      this.$raf.start();
     },
     update: function (ts) {
       if (ts > this.addCount * 1000) {
@@ -169,9 +168,8 @@ var taichi = new janvas.Canvas({
     mousedown: function (ev) {
       this.add(ev.$x, ev.$y);
     },
-    visibility: function (visible) {
-      if (visible) this.$raf.resume();
-      else this.$raf.pause();
+    visibilitychange: function (visible) {
+      visible ? this.$raf.resume() : this.$raf.pause();
     },
     resize: function () {
       this.background.setWidth(this.$width).setHeight(this.$height);

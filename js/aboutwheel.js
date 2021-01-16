@@ -13,7 +13,7 @@ var aboutWheel = new janvas.Canvas({
       this.img.getStyle().setStrokeStyle("grey");
       this.img.animationQueue = []; // 动画队列
       this.img.count = this.img.maxCount = Math.floor(256 / this.$interval);
-      this.$raf.start();
+      this.$raf.resume();
     },
     update: function (ts) {
       this.img.getMatrix().setAngle(Math.PI / 2000 * ts);

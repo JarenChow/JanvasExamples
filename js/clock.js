@@ -107,7 +107,7 @@ var clock = new janvas.Canvas({
       this.dot.initXY(cx, cy).setRadius(offset / Math.pow(goldenRatio, 2));
       this.resizeStyles();
     },
-    visibility: function (visible) {
+    visibilitychange: function (visible) {
       if (visible) {
         this.resetTime();
         this.$raf.start();
