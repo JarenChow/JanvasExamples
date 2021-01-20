@@ -7,7 +7,7 @@ var flyDots = new janvas.Canvas({
   },
   components: {
     factory: (function () {
-      function Dot(ctx, width, height) {
+      function Dot($ctx, width, height) {
         this.setBounding(width, height);
         this._x = janvas.Utils.randInt(this._left, this._right, true);
         this._y = janvas.Utils.randInt(this._top, this._bottom, true);
@@ -16,7 +16,7 @@ var flyDots = new janvas.Canvas({
         this._lvy = this._vy = janvas.Utils.randSign() * janvas.Utils.randInt(10, 100, true) / 100;
         this._relateStart = [];
         this._relateEnd = [];
-        this.arc = new janvas.Arc(ctx, this._x, this._y, this._r);
+        this.arc = new janvas.Arc($ctx, this._x, this._y, this._r);
         this.arc.getStyle().setFillStyle("hsl(0, 0%, 40%)");
       }
 
@@ -65,8 +65,8 @@ var flyDots = new janvas.Canvas({
         }
       };
 
-      function Line(ctx, source, target) {
-        this.line = new janvas.Line(ctx);
+      function Line($ctx, source, target) {
+        this.line = new janvas.Line($ctx);
         source.relateStart(this.line);
         target.relateEnd(this.line);
         this._rgb = new janvas.Rgb(0, 0, 0, 0);
@@ -86,12 +86,8 @@ var flyDots = new janvas.Canvas({
       };
 
       return {
-        newDot: function (width, height) {
-          return new Dot(this.$ctx, width, height);
-        },
-        newLine: function (source, target) {
-          return new Line(this.$ctx, source, target);
-        }
+        Dot: Dot,
+        Line: Line
       };
     }())
   },
@@ -99,15 +95,15 @@ var flyDots = new janvas.Canvas({
     init: function () {
       this.background = new janvas.Rect(this.$ctx, 0, 0);
       for (var i = 0; i < 100; i++) {
-        var dot = this.factory.newDot(this.$width, this.$height);
+        var dot = new this.factory.Dot(this.$ctx, this.$width, this.$height);
         this.dots.forEach(function (target) {
-          this.lines.push(this.factory.newLine(dot, target));
+          this.lines.push(new this.factory.Line(this.$ctx, dot, target));
         }, this);
         this.dots.push(dot);
       }
-      this.cursor = this.factory.newDot();
+      this.cursor = new this.factory.Dot();
       this.dots.forEach(function (target) {
-        this.lines.push(this.factory.newLine(this.cursor, target));
+        this.lines.push(new this.factory.Line(this.$ctx, this.cursor, target));
       }, this);
     },
     update: function () {

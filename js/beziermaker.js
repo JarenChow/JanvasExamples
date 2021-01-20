@@ -8,11 +8,11 @@ var bezierMaker = new janvas.Canvas({
   },
   components: {
     factory: (function () {
-      function Dot(ctx, x, y, index) {
+      function Dot($ctx, x, y, index) {
         this._index = index;
         this._r = 5;
-        this.arc = new janvas.Arc(ctx, 0, 0, this._r);
-        this.text = new janvas.Text(ctx);
+        this.arc = new janvas.Arc($ctx, 0, 0, this._r);
+        this.text = new janvas.Text($ctx);
         this.initXY(x, y);
         this.initStyles();
         this.highlight(true);
@@ -73,8 +73,8 @@ var bezierMaker = new janvas.Canvas({
 
       return {
         _index: 0,
-        newDot: function (x, y) {
-          return new Dot(this.$ctx, x, y, this._index++);
+        newDot: function ($ctx, x, y) {
+          return new Dot($ctx, x, y, this._index++);
         },
         decreaseAutoIndex: function () {
           this._index--;
@@ -132,7 +132,7 @@ var bezierMaker = new janvas.Canvas({
           this.toggleLocked(this.current);
         } else {
           if (this.locked) this.locked.highlight(false);
-          this.dots.push(this.locked = this.current = this.factory.newDot(ev.$x, ev.$y));
+          this.dots.push(this.locked = this.current = this.factory.newDot(this.$ctx, ev.$x, ev.$y));
           this.polyline.insert(ev.$x, ev.$y);
         }
         this.locked.mark();

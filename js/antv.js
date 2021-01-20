@@ -2,17 +2,17 @@ var antv = new janvas.Canvas({
   container: "#app",
   components: {
     factory: (function () {
-      function Node(ctx, id, x, y, label) {
+      function Node($ctx, id, x, y, label) {
         this._defaultRadius = 1;
         this._scale = 1;
         this._showText = false;
-        this.arc = new janvas.FixedArc(ctx, 0, 0, this._defaultRadius);
-        this._arc = new janvas.FixedRect(ctx,
+        this.arc = new janvas.FixedArc($ctx, 0, 0, this._defaultRadius);
+        this._arc = new janvas.FixedRect($ctx,
           -this._defaultRadius, -this._defaultRadius,
           this._defaultRadius * 2, this._defaultRadius * 2);
         this._arc.setMatrix(this.arc.getMatrix());
         this._arc.setStyle(this.arc.getStyle());
-        this.text = new janvas.Text(ctx, 0, 0, label || id);
+        this.text = new janvas.Text($ctx, 0, 0, label || id);
         this.text.getStyle().setFont("1.5px sans-serif").setTextBaseline("middle");
         this.setXY(x, y);
         this.highlight(false);
@@ -80,11 +80,11 @@ var antv = new janvas.Canvas({
         }
       };
 
-      function Edge(ctx, source, target) {
+      function Edge($ctx, source, target) {
         this._show = true;
         this.source = source;
         this.target = target;
-        this.line = new janvas.Line(ctx, 0, 0, 0, 0);
+        this.line = new janvas.Line($ctx, 0, 0, 0, 0);
         this.line.getStyle().setStrokeStyle("#333333").setLineWidth(0.1);
         this.refresh();
       }
@@ -105,14 +105,14 @@ var antv = new janvas.Canvas({
         }
       };
 
-      function Hint(ctx, cfg) {
+      function Hint($ctx, $cfg) {
         this._show = false;
         this._of = this._pdt = 3; // offset, paddingLeft, paddingTop
         this._pdl = 5;
-        this.cfg = cfg;
-        this.roundRect = new janvas.RoundRect(ctx, 0, 0, 0, 0);
+        this.$cfg = $cfg;
+        this.roundRect = new janvas.RoundRect($ctx, 0, 0, 0, 0);
         this.roundRect.getStyle().setFillStyle("white").setStrokeStyle("white");
-        this.text = new janvas.Text(ctx, 0, 0, "");
+        this.text = new janvas.Text($ctx, 0, 0, "");
         this.text.getStyle().setFont("12px sans-serif").setTextBaseline("bottom");
         this.shadow = new janvas.ShadowStyle().setShadowBlur(20).setShadowColor("grey");
       }
@@ -120,9 +120,9 @@ var antv = new janvas.Canvas({
       Hint.prototype = {
         draw: function () {
           if (this._show) {
-            this.cfg.setShadowStyles(this.shadow);
+            this.$cfg.setShadowStyles(this.shadow);
             this.roundRect.fillStroke();
-            this.cfg.resetShadowStyles();
+            this.$cfg.resetShadowStyles();
             this.text.fill();
           }
         },
@@ -148,19 +148,17 @@ var antv = new janvas.Canvas({
 
       return {
         nodesMap: new Map(),
-        newNode: function (id, x, y, label) {
-          var node = new Node(this.$ctx, id, x, y, label);
+        newNode: function ($ctx, id, x, y, label) {
+          var node = new Node($ctx, id, x, y, label);
           this.nodesMap.set(id, node);
           return node;
         },
-        newEdge: function (source, target) {
+        newEdge: function ($ctx, source, target) {
           source = this.nodesMap.get(source);
           target = this.nodesMap.get(target);
-          return source && target ? new Edge(this.$ctx, source, target) : void (0);
+          return source && target ? new Edge($ctx, source, target) : null;
         },
-        newHint: function () {
-          return new Hint(this.$ctx, this.$cfg);
-        }
+        Hint: Hint
       };
     }())
   },
@@ -168,7 +166,7 @@ var antv = new janvas.Canvas({
     init: function () {
       this.nodes = [];
       this.edges = [];
-      this.hint = this.factory.newHint();
+      this.hint = new this.factory.Hint(this.$ctx, this.$cfg);
       this.background = new janvas.Rect(this.$ctx, 0, 0, this.$width, this.$height);
     },
     draw: function () {
@@ -184,11 +182,11 @@ var antv = new janvas.Canvas({
     data: function (res) {
       this.nodes.length = this.edges.length = 0;
       res.nodes.forEach(function (node) {
-        this.nodes.push(this.factory.newNode(node.id,
-          node.x, node.y, node.olabel));
+        this.nodes.push(this.factory.newNode(this.$ctx,
+          node.id, node.x, node.y, node.olabel));
       }, this);
       res.edges.forEach(function (edge) {
-        edge = this.factory.newEdge(edge.source, edge.target);
+        edge = this.factory.newEdge(this.$ctx, edge.source, edge.target);
         if (edge) this.edges.push(edge);
       }, this);
       this.draw();

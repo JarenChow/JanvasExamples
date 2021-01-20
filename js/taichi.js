@@ -6,18 +6,18 @@ var taichi = new janvas.Canvas({
     taichi: []
   },
   components: {
-    factory: (function () {
-      function Taichi(ctx, x, y, r) {
-        var outer = new janvas.Arc(ctx, x, y, r);
+    Taichi: (function () {
+      function Taichi($ctx, x, y, r) {
+        var outer = new janvas.Arc($ctx, x, y, r);
         outer.getStyle().setLineWidth(r / 8);
-        var left = new janvas.Arc(ctx, x, y, r, Math.PI / 2, -Math.PI / 2, false, x, y);
-        var right = new janvas.Arc(ctx, x, y, r, Math.PI / 2, -Math.PI / 2, true, x, y);
+        var left = new janvas.Arc($ctx, x, y, r, Math.PI / 2, -Math.PI / 2, false, x, y);
+        var right = new janvas.Arc($ctx, x, y, r, Math.PI / 2, -Math.PI / 2, true, x, y);
         right.getStyle().setFillStyle("white");
-        var top = new janvas.Arc(ctx, x, y - r / 2, r / 2, 0, Math.PI * 2, false, x, y);
-        var bottom = new janvas.Arc(ctx, x, y + r / 2, r / 2, 0, Math.PI * 2, false, x, y);
+        var top = new janvas.Arc($ctx, x, y - r / 2, r / 2, 0, Math.PI * 2, false, x, y);
+        var bottom = new janvas.Arc($ctx, x, y + r / 2, r / 2, 0, Math.PI * 2, false, x, y);
         bottom.getStyle().setFillStyle("white");
-        var topSmall = new janvas.Arc(ctx, x, y - r / 2, r / 8, 0, Math.PI * 2, false, x, y);
-        var bottomSmall = new janvas.Arc(ctx, x, y + r / 2, r / 8, 0, Math.PI * 2, false, x, y);
+        var topSmall = new janvas.Arc($ctx, x, y - r / 2, r / 8, 0, Math.PI * 2, false, x, y);
+        var bottomSmall = new janvas.Arc($ctx, x, y + r / 2, r / 8, 0, Math.PI * 2, false, x, y);
         topSmall.getStyle().setFillStyle("white");
         this.x = x;
         this.y = y;
@@ -127,11 +127,7 @@ var taichi = new janvas.Canvas({
         }
       };
 
-      return {
-        createTaichi: function (x, y, r) {
-          return new Taichi(this.$ctx, x, y, r);
-        }
-      };
+      return Taichi;
     }())
   },
   methods: {
@@ -177,7 +173,8 @@ var taichi = new janvas.Canvas({
   },
   functions: {
     add: function (x, y) {
-      this.taichi.push(this.factory.createTaichi(
+      this.taichi.push(new this.Taichi(
+        this.$ctx,
         x || janvas.Utils.randInt(0, this.$width),
         y || janvas.Utils.randInt(0, this.$height),
         janvas.Utils.randInt(20, 100)

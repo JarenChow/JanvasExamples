@@ -1,6 +1,6 @@
 {
   "name": "janvasexamples",
-  "version": "1.2.7",
+  "version": "1.2.8",
   "description": "Examples created with janvas.",
   "main": "dist/janvasexamples.min.js",
   "scripts": {
@@ -21,7 +21,7 @@
   "author": "JarenChow",
   "license": "MIT",
   "dependencies": {
-    "janvas": "2.6.4"
+    "janvas": "2.6.7"
   },
   "bugs": {
     "url": "https://github.com/JarenChow/JanvasExamples/issues"
