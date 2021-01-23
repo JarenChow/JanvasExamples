@@ -22,13 +22,40 @@ Examples created with [janvas](https://github.com/jarenchow/janvas).
 
 而使用 **janvas** 从低抽象角度来定制，数据量即使达到 **50000\+** 时，依然可以**缩放**、**拖曳**以及**自定义更多交互**。
 
-## [TaiChi](https://jarenchow.github.io/JanvasExamples/html/taichi.html)
+## [CodeRain](https://jarenchow.github.io/JanvasExamples/html/coderain.html)
 
-太极图可由外圆，左半圆，右半圆，上下中小圆，一共 **7** 个圆形组成，不到两百行代码构建太极屏保，包含旋转、渐变、碰撞检测等。
+基于 **janvas** 编写不到 *200* 行代码几乎 100% 还原 The Matrix 特效代码雨。
 
-## [SVG Support](https://jarenchow.github.io/JanvasExamples/html/tiger.html)
+可以使用 `janvasexamples.coderain(document.body).$canvas.style.zIndex = "-1";` 来为自己的网页添加此特效。
 
-依据 svg 数据生成的组合图形仍然具有范围检测、样式自定义及矩阵变形的功能。
+## [TheLastJanvas](https://jarenchow.github.io/JanvasExamples/html/the_last_janvas.html)
+
+在 **CodePen** 上非常出名的 [The Last Experience](https://codepen.io/ge1doot/pen/LkdOwj)，使用 **janvas** 改写的示例。
+
+原作者 [ge1doot](https://codepen.io/ge1doot) 使用了 `<canvas>` 存储了每个关节的图片，然后用 `drawImage()` 的方式绘制出来，这样会导致每个关节都需要一个 `<canvas>` 元素，而使用 **janvas** 开发：
+
+1. 直接处理成了实时绘制的 `janvas.Line/Rect/Arc`，对象身体会被事件拉长
+2. 并且直接处理变形，不再需要手动 `translate/rotate`，效率有较大提升
+3. `interval` 设置为 16，直接处理了不同刷新率屏幕下的同一表现，减少代码体积
+4. 自动适配高分屏，省去大量琐碎操作
+
+## [Stats](https://jarenchow.github.io/JanvasExamples/html/stats.html)
+
+原示例来源于接近 *7k* 赞的 [mrdoob](https://github.com/mrdoob) 的 [stats.js](https://github.com/mrdoob/stats.js)，是一个小巧的性能监测组件。
+
+使用 **janvas** 改写后，性能消耗更低十倍多，几乎成为一个毫不起眼毫不占用的小组件，有兴趣可对比自行测试 [stress.html](https://github.com/mrdoob/stats.js/blob/master/examples/stress.html)。
+
+使用方式：
+
+1. 先引入 **janvas** 及 **janvasexamles**。
+2. `<div id="stats" style="position: fixed;top: 0;right: 0;width: 80px;height: 48px;cursor: pointer;opacity: 0.9;z-index: 999;"></div>`
+3. `var stats = janvasexamples.stats("#stats");`
+
+自定义显示：
+
+1. `stats.addPanel("foo", "#ffff88", "#222211");`
+2. `stats.showPanel(3);`
+3. 循环调用：`stats.updatePanel("foo", [value], [maxValue]);`
 
 ## [Clock](https://jarenchow.github.io/JanvasExamples/html/clock.html)
 
@@ -49,6 +76,18 @@ Examples created with [janvas](https://github.com/jarenchow/janvas).
 
 使用 **janvas** 简单轻松绘制的不算特效的特效。
 
+## [SVG Support](https://jarenchow.github.io/JanvasExamples/html/tiger.html)
+
+依据 svg 数据生成的组合图形仍然具有范围检测、样式自定义及矩阵变形的功能。
+
+## [CircleText](https://jarenchow.github.io/JanvasExamples/html/circletext.html)
+
+**janvas** v2.6.1 新增数十个 janvas.Utils.$ease 默认动效函数。
+
+## [TaiChi](https://jarenchow.github.io/JanvasExamples/html/taichi.html)
+
+太极图可由外圆，左半圆，右半圆，上下中小圆，一共 **7** 个圆形组成，不到两百行代码构建太极屏保，包含旋转、渐变、碰撞检测等。
+
 ## [AboutWheel](https://jarenchow.github.io/JanvasExamples/html/about_wheel.html)
 
 缩放公式：target = event + (source - event) * scale / lastScale;
@@ -58,26 +97,3 @@ Examples created with [janvas](https://github.com/jarenchow/janvas).
 ## [AboutEdge](https://jarenchow.github.io/JanvasExamples/html/about_edge.html)
 
 v2.1.0 新增绘制连线的 Edge 类，实现了图数据库中的连线的样式。
-
-## [CircleText](https://jarenchow.github.io/JanvasExamples/html/circletext.html)
-
-**janvas** v2.6.1 新增数十个 janvas.Utils.$ease 默认动效函数。
-
-## [CodeRain](https://jarenchow.github.io/JanvasExamples/html/coderain.html)
-
-基于 **janvas** 编写不到 *200* 行代码几乎 100% 还原 The Matrix 特效代码雨。
-
-可以使用 `janvasexamples.coderain(document.body).$canvas.style.zIndex = "-1";` 来为自己的网页添加此特效。
-
-## [TheLastJanvas](https://jarenchow.github.io/JanvasExamples/html/the_last_janvas.html)
-
-在 **CodePen** 上非常出名的 [The Last Experience](https://codepen.io/ge1doot/pen/LkdOwj)，使用 **janvas** 改写的示例。
-
-原作者 [ge1doot](https://codepen.io/ge1doot) 使用了 `<canvas>` 存储了每个关节的图片，然后用 `drawImage()` 的方式绘制出来，这样会导致每个关节都需要一个 `<canvas>` 元素，而使用 **janvas** 开发：
-
-1. 直接处理成了实时绘制的 `janvas.Line/Rect/Arc`
-2. 并且直接处理变形，不再需要手动 `translate/rotate`
-3. `interval` 设置为 16，直接处理了不同刷新率屏幕下的同一表现
-4. 自动适配高分屏
-
-最直观的效果是拖动对象时，对象的身体会被拉长。
