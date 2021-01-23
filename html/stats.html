@@ -15,12 +15,14 @@
 </head>
 <body>
 
-<div id="stats" style="position: fixed;top: 0;right: 0;width: 80px;height: 48px;cursor: pointer;opacity: 0.9;z-index: 999;"></div>
+<div id="app" style="width: 100%;height: 100%;"></div>
+<div id="stats" style="position: fixed;left: 0;top: 0;width: 80px;height: 48px;cursor: pointer;opacity: 0.9;z-index: 999;"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/janvas"></script>
 <script src="https://cdn.jsdelivr.net/npm/janvasexamples"></script>
 <script>
   janvasexamples.stats("#stats");
+  janvasexamples.thelastjanvas("#app");
 </script>
 
 </body>
