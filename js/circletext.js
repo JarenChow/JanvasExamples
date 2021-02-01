@@ -6,7 +6,7 @@ var circleText = new janvas.Canvas({
     str: "HELLOJANVAS",
     texts: [],
     length: 0,
-    ease: janvas.Utils.$ease.inout.bounce
+    ease: janvas.Utils.ease.inout.bounce
   },
   methods: {
     init: function () {
@@ -31,7 +31,7 @@ var circleText = new janvas.Canvas({
         this.texts.push(text);
       }
       for (var i = 0; i < this.length; i++) {
-        this.texts[i].setText(textString[i]).targetAngle = 2 * Math.PI * i / this.length;
+        this.texts[i].setText(textString[i]).targetAngle = Math.PI * 2 * i / this.length;
       }
       this.$raf.start();
     },

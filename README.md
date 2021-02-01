@@ -80,9 +80,17 @@ Examples created with [janvas](https://github.com/jarenchow/janvas).
 
 依据 svg 数据生成的组合图形仍然具有范围检测、样式自定义及矩阵变形的功能。
 
+## [Sudoku](https://jarenchow.github.io/JanvasExamples/html/sudoku.html)
+
+**janvas** 制作的数独，左键操作，右键随机，中键还原。
+
+## [Cursor](https://jarenchow.github.io/JanvasExamples/html/cursor.html)
+
+HTML Element.style.cursor 样式对照示例。
+
 ## [CircleText](https://jarenchow.github.io/JanvasExamples/html/circletext.html)
 
-**janvas** v2.6.1 新增数十个 janvas.Utils.$ease 默认动效函数。
+**janvas** v2.6.1 新增数十个 janvas.Utils.ease 默认动效函数。
 
 ## [TaiChi](https://jarenchow.github.io/JanvasExamples/html/taichi.html)
 
