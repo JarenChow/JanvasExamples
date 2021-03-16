@@ -1,5 +1,6 @@
 var theLastJanvas = new janvas.Canvas({
   container: "#app",
+  duration: Infinity,
   interval: 16,
   components: {
     Dancer: (function () {

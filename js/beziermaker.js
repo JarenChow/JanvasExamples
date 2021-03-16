@@ -1,5 +1,6 @@
 var bezierMaker = new janvas.Canvas({
   container: "#app",
+  duration: Infinity,
   interval: 16,
   props: {
     position: 0, // 指示器运行位置

@@ -1,5 +1,6 @@
 var clock = new janvas.Canvas({
   container: "#app",
+  duration: Infinity,
   methods: {
     init: function () {
       var bezier = new janvas.Bezier(this.$ctx, 0, 0, [0, 0, 100, 1457, 200, -460, 300, 989, 400, 405, 500, 500]);
@@ -39,6 +40,7 @@ var clock = new janvas.Canvas({
       this.outer.border.getStyle().setLineWidth(min / 35);
       this.outer.shadow.setShadowBlur(min / 70).setShadowOffsetX(-this.$width);
       this.gradient("hsl(0, 80%, 70%)", "hsl(0, 80%, 50%)", this.second);
+      this.dot.getStyle().setLineWidth(1 / this.$dpr);
     },
     update: function (ts) {
       ts += this.milliseconds;

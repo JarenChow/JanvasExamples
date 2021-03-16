@@ -1,5 +1,6 @@
 var stats = new janvas.Canvas({
-  container: "#app",
+  container: "#stats",
+  duration: Infinity,
   props: {
     fpsTimespan: 1000, // fps refresh timespan, default 1000ms
     mbTimespan: 500

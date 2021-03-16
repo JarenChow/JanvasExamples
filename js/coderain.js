@@ -1,5 +1,6 @@
 var codeRain = new janvas.Canvas({
   container: "#app",
+  duration: Infinity,
   interval: 50,
   props: {
     chars: [], // can define your own string array

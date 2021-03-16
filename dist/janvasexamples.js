@@ -1,4 +1,4 @@
-// https://github.com/JarenChow/Janvas Created by JarenChow in 2020 janvas.js v1.3.1
+// https://github.com/JarenChow/Janvas Created by JarenChow in 2020 janvas.js v1.3.2
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('janvas')) :
     typeof define === 'function' && define.amd ? define(['janvas'], factory) :
@@ -371,6 +371,7 @@ fetch("https://gw.alipayobjects.com/os/bmw-prod/f1565312-d537-4231-adf5-81cb1cd3
 function taichi(container) {
   return new janvas.Canvas({
   container: container,
+  duration: Infinity,
   interval: 16,
   props: {
     addCount: 0,
@@ -889,6 +890,7 @@ tiger.data('<?xml version="1.0" encoding="UTF-8"?>\
 function clock(container) {
   return new janvas.Canvas({
   container: container,
+  duration: Infinity,
   methods: {
     init: function () {
       var bezier = new janvas.Bezier(this.$ctx, 0, 0, [0, 0, 100, 1457, 200, -460, 300, 989, 400, 405, 500, 500]);
@@ -928,6 +930,7 @@ function clock(container) {
       this.outer.border.getStyle().setLineWidth(min / 35);
       this.outer.shadow.setShadowBlur(min / 70).setShadowOffsetX(-this.$width);
       this.gradient("hsl(0, 80%, 70%)", "hsl(0, 80%, 50%)", this.second);
+      this.dot.getStyle().setLineWidth(1 / this.$dpr);
     },
     update: function (ts) {
       ts += this.milliseconds;
@@ -1054,6 +1057,7 @@ clock.onEvent = function (hours, minutes, seconds) {
 function beziermaker(container) {
   return new janvas.Canvas({
   container: container,
+  duration: Infinity,
   interval: 16,
   props: {
     position: 0, // 指示器运行位置
@@ -1309,6 +1313,7 @@ bezierMaker.autoResize(true);
 function flydots(container) {
   return new janvas.Canvas({
   container: container,
+  duration: Infinity,
   interval: 16,
   props: {
     dots: [],
@@ -1463,6 +1468,7 @@ function flydots(container) {
 function aboutwheel(container) {
   return new janvas.Canvas({
   container: container,
+  duration: Infinity,
   interval: 16,
   props: {
     size: 50
@@ -1723,6 +1729,7 @@ function circletext(container) {
 function coderain(container) {
   return new janvas.Canvas({
   container: container,
+  duration: Infinity,
   interval: 50,
   props: {
     chars: [], // can define your own string array
@@ -1916,6 +1923,7 @@ function coderain(container) {
 function thelastjanvas(container) {
   return new janvas.Canvas({
   container: container,
+  duration: Infinity,
   interval: 16,
   components: {
     Dancer: (function () {
@@ -2277,7 +2285,8 @@ function thelastjanvas(container) {
 
 function stats(container) {
   return new janvas.Canvas({
-  container: container,
+  container: "#stats",
+  duration: Infinity,
   props: {
     fpsTimespan: 1000, // fps refresh timespan, default 1000ms
     mbTimespan: 500

@@ -1,5 +1,6 @@
 var aboutWheel = new janvas.Canvas({
   container: "#app",
+  duration: Infinity,
   interval: 16,
   props: {
     size: 50
