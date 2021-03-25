@@ -103,9 +103,9 @@ var theLastJanvas = new janvas.Canvas({
           p0.y -= sy * r1;
         },
         draw: function () {
-          this.$cfg.setShadowStyles(this.shadow);
+          this.$cfg.setShadowStyle(this.shadow);
           this._draw();
-          this.$cfg.resetShadowStyles();
+          this.$cfg.resetShadowStyle();
           var p0 = this.p0, p1 = this.p1, o = this._offset;
           this.startRect.getMatrix().setAngle(Math.atan2(p1.y - p0.y, p1.x - p0.x));
           this.startRect.init(p0.x - o, p0.y - o, p0.x, p0.y).fill();
@@ -258,11 +258,11 @@ var theLastJanvas = new janvas.Canvas({
       this.footer.getStyle().setFillStyle("#222");
       this.dancers = [];
       this.pointer = {x: 0, y: 0, dancerDrag: null, pointDrag: null, ground: 0, context: this};
-      this._otherStyle = new janvas.OtherStyle().setLineCap("round");
+      this._globalStyle = new janvas.GlobalStyle().setLineCap("round");
       this._initDancer();
     },
     resize: function () {
-      this.$cfg.setOtherStyles(this._otherStyle);
+      this.$cfg.setGlobalStyle(this._globalStyle);
       var w = this.$width, h = this.$height;
       this.background.setWidth(w).setHeight(h);
       this.header.setWidth(w).setHeight(h * 0.15);

@@ -64,20 +64,20 @@ var clock = new janvas.Canvas({
     },
     draw: function () {
       this.background.fill();
-      this.$cfg.setShadowStyles(this.shadow);
+      this.$cfg.setShadowStyle(this.shadow);
       this.bottom.fill();
-      this.$cfg.setShadowStyles(this.bottom.shadow);
+      this.$cfg.setShadowStyle(this.bottom.shadow);
       this.bottom.clip().border.stroke().restore();
-      this.$cfg.resetShadowStyles();
+      this.$cfg.resetShadowStyle();
       this.outer.fill();
-      this.$cfg.setShadowStyles(this.outer.shadow);
+      this.$cfg.setShadowStyle(this.outer.shadow);
       this.outer.border.stroke();
-      this.$cfg.setShadowStyles(this.shadow);
+      this.$cfg.setShadowStyle(this.shadow);
       this.hour.fill();
       this.minute.fill();
       this.second.fill();
       this.dot.fill();
-      this.$cfg.resetShadowStyles();
+      this.$cfg.resetShadowStyle();
       this.dot.stroke();
     }
   },

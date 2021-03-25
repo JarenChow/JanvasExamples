@@ -120,9 +120,9 @@ var antv = new janvas.Canvas({
       Hint.prototype = {
         draw: function () {
           if (this._show) {
-            this.$cfg.setShadowStyles(this.shadow);
+            this.$cfg.setShadowStyle(this.shadow);
             this.roundRect.fillStroke();
-            this.$cfg.resetShadowStyles();
+            this.$cfg.resetShadowStyle();
             this.text.fill();
           }
         },

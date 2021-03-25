@@ -1,4 +1,4 @@
-// https://github.com/JarenChow/Janvas Created by JarenChow in 2020 janvas.js v1.3.2
+// https://github.com/JarenChow/Janvas Created by JarenChow in 2020 janvas.js v1.3.3
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('janvas')) :
     typeof define === 'function' && define.amd ? define(['janvas'], factory) :
@@ -216,9 +216,9 @@ function antv(container) {
       Hint.prototype = {
         draw: function () {
           if (this._show) {
-            this.$cfg.setShadowStyles(this.shadow);
+            this.$cfg.setShadowStyle(this.shadow);
             this.roundRect.fillStroke();
-            this.$cfg.resetShadowStyles();
+            this.$cfg.resetShadowStyle();
             this.text.fill();
           }
         },
@@ -954,20 +954,20 @@ function clock(container) {
     },
     draw: function () {
       this.background.fill();
-      this.$cfg.setShadowStyles(this.shadow);
+      this.$cfg.setShadowStyle(this.shadow);
       this.bottom.fill();
-      this.$cfg.setShadowStyles(this.bottom.shadow);
+      this.$cfg.setShadowStyle(this.bottom.shadow);
       this.bottom.clip().border.stroke().restore();
-      this.$cfg.resetShadowStyles();
+      this.$cfg.resetShadowStyle();
       this.outer.fill();
-      this.$cfg.setShadowStyles(this.outer.shadow);
+      this.$cfg.setShadowStyle(this.outer.shadow);
       this.outer.border.stroke();
-      this.$cfg.setShadowStyles(this.shadow);
+      this.$cfg.setShadowStyle(this.shadow);
       this.hour.fill();
       this.minute.fill();
       this.second.fill();
       this.dot.fill();
-      this.$cfg.resetShadowStyles();
+      this.$cfg.resetShadowStyle();
       this.dot.stroke();
     }
   },
@@ -2026,9 +2026,9 @@ function thelastjanvas(container) {
           p0.y -= sy * r1;
         },
         draw: function () {
-          this.$cfg.setShadowStyles(this.shadow);
+          this.$cfg.setShadowStyle(this.shadow);
           this._draw();
-          this.$cfg.resetShadowStyles();
+          this.$cfg.resetShadowStyle();
           var p0 = this.p0, p1 = this.p1, o = this._offset;
           this.startRect.getMatrix().setAngle(Math.atan2(p1.y - p0.y, p1.x - p0.x));
           this.startRect.init(p0.x - o, p0.y - o, p0.x, p0.y).fill();
@@ -2181,11 +2181,11 @@ function thelastjanvas(container) {
       this.footer.getStyle().setFillStyle("#222");
       this.dancers = [];
       this.pointer = {x: 0, y: 0, dancerDrag: null, pointDrag: null, ground: 0, context: this};
-      this._otherStyle = new janvas.OtherStyle().setLineCap("round");
+      this._globalStyle = new janvas.GlobalStyle().setLineCap("round");
       this._initDancer();
     },
     resize: function () {
-      this.$cfg.setOtherStyles(this._otherStyle);
+      this.$cfg.setGlobalStyle(this._globalStyle);
       var w = this.$width, h = this.$height;
       this.background.setWidth(w).setHeight(h);
       this.header.setWidth(w).setHeight(h * 0.15);
