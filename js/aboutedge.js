@@ -20,15 +20,15 @@ var aboutEdge = new janvas.Canvas({
         .setTextBaseline("middle");
       this.edge.setEmptyLength(janvas.Utils.measureTextWidth(this.text.getText(),
         this.text.getStyle().getFont()) / 0.809);
-      this.head = new janvas.ArrowHead(this.$ctx).setArrowLength(12);
+      this.head = new janvas.ArrowHead(this.$ctx).setHeadLength(12);
       this.head.getStyle().setFillStyle("hsl(270, 80%, 60%)");
       this.setCurvePropsAndDraw();
     },
     draw: function () {
-      this.background.clear(0, 0, this.$width, this.$height);
+      this.$clear();
       this.edge.stroke();
       if (this.edge.ratioInRange()) {
-        var an = this.edge.getLineAngle();
+        var an = this.edge.getAngle();
         this.text.getMatrix().setAngle(an > -Math.PI / 2 && an < Math.PI / 2 ? an : an + Math.PI);
         this.text.init(this.edge.getTargetX(), this.edge.getTargetY(),
           this.edge.getTargetX(), this.edge.getTargetY()).fill();
@@ -36,7 +36,7 @@ var aboutEdge = new janvas.Canvas({
       this.start.fill();
       this.end.fill();
       this.an.fill();
-      this.head.setAngle(this.edge.getAngle()).fill();
+      this.head.setAnchorAngle(this.edge.getAnchorAngle()).fill();
     }
   },
   events: {
@@ -51,12 +51,12 @@ var aboutEdge = new janvas.Canvas({
       if (this._mousedown) {
         if (ev.buttons === 2) {
           this.points.forEach(function (point) {
-            point.initXY(point.lastX + ev.$moveX, point.lastY + ev.$moveY);
+            point.setStart(point.lastX + ev.$moveX, point.lastY + ev.$moveY);
           }, this);
           this.setCurvePropsAndDraw();
         } else {
           if (!this.current) return;
-          this.current.initXY(this.current.lastX + ev.$moveX,
+          this.current.setStart(this.current.lastX + ev.$moveX,
             this.current.lastY + ev.$moveY);
           this.setCurvePropsAndDraw();
         }
@@ -77,10 +77,10 @@ var aboutEdge = new janvas.Canvas({
   },
   functions: {
     setCurvePropsAndDraw: function () {
-      this.edge.initXY(this.start.getStartX(), this.start.getStartY())
-        .setEndX(this.end.getStartX()).setEndY(this.end.getStartY())
-        .setAngleX(this.an.getStartX()).setAngleY(this.an.getStartY());
-      this.head.initXY(this.end.getStartX(), this.end.getStartY());
+      this.edge.setStart(this.start.getStartX(), this.start.getStartY())
+        .setEnd(this.end.getStartX(), this.end.getStartY())
+        .setAnchor(this.an.getStartX(), this.an.getStartY());
+      this.head.setStart(this.end.getStartX(), this.end.getStartY());
       this.draw();
     },
     setCursor: function (cursor) {

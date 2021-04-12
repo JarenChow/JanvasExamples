@@ -22,10 +22,10 @@ var flyDots = new janvas.Canvas({
       }
 
       Dot.prototype = {
-        initXY: function (x, y) {
+        setStart: function (x, y) {
           this._x = x;
           this._y = y;
-          this.arc.initXY(x, y);
+          this.arc.setStart(x, y);
           this._relateStart.forEach(this.startCallback, this);
           this._relateEnd.forEach(this.endCallBack, this);
         },
@@ -44,10 +44,10 @@ var flyDots = new janvas.Canvas({
           this._relateEnd.push(line);
         },
         startCallback: function (line) {
-          line.initXY(this._x, this._y);
+          line.setStart(this._x, this._y);
         },
         endCallBack: function (line) {
-          line.setEndX(this._x).setEndY(this._y);
+          line.setEnd(this._x, this._y);
         },
         setBounding: function (width, height) {
           this._left = this._top = -50;
@@ -57,7 +57,7 @@ var flyDots = new janvas.Canvas({
         update: function () {
           this._x += this._vx;
           this._y += this._vy;
-          this.initXY(this._x, this._y);
+          this.setStart(this._x, this._y);
           if (this._x < this._left || this._x > this._right) this._lvx = this._vx *= -1;
           if (this._y < this._top || this._y > this._bottom) this._lvy = this._vy *= -1;
         },
@@ -70,16 +70,16 @@ var flyDots = new janvas.Canvas({
         this.line = new janvas.Line($ctx);
         source.relateStart(this.line);
         target.relateEnd(this.line);
-        this._rgb = new janvas.Rgb(0, 0, 0, 0);
+        // this._rgb = new janvas.Rgb(0, 0, 0, 0);
       }
 
       Line.prototype = {
         update: function () {
-          var _ratio = 255 - janvas.Utils.pythagorean(
+          var _ratio = 1 - janvas.Utils.pythagorean(
             this.line.getStartX() - this.line.getEndX(),
-            this.line.getStartY() - this.line.getEndY()) / 100 * 255;
-          this._ratio = _ratio < 0 ? 0 : _ratio;
-          this.line.getStyle().setStrokeStyle(this._rgb.setAlpha(this._ratio).toRgbString(true));
+            this.line.getStartY() - this.line.getEndY()) / 100;
+          this.line.getStyle().setAlpha(this._ratio = _ratio < 0 ? 0 : _ratio);
+          // this.line.getStyle().setStrokeStyle(this._rgb.setAlpha(this._ratio).toRgbString(true));
         },
         draw: function () {
           if (this._ratio) this.line.stroke();
@@ -94,7 +94,6 @@ var flyDots = new janvas.Canvas({
   },
   methods: {
     init: function () {
-      this.background = new janvas.Rect(this.$ctx, 0, 0);
       for (var i = 0; i < 100; i++) {
         var dot = new this.factory.Dot(this.$ctx, this.$width, this.$height);
         this.dots.forEach(function (target) {
@@ -116,7 +115,7 @@ var flyDots = new janvas.Canvas({
       });
     },
     draw: function () {
-      this.background.clear(0, 0, this.$width, this.$height);
+      this.$clear();
       this.lines.forEach(function (line) {
         line.draw();
       });
@@ -132,7 +131,7 @@ var flyDots = new janvas.Canvas({
       }, this);
     },
     mousemove: function (ev) {
-      this.cursor.initXY(ev.$x, ev.$y);
+      this.cursor.setStart(ev.$x, ev.$y);
     },
     mouseup: function () {
       this.dots.forEach(function (dot) {
@@ -140,7 +139,6 @@ var flyDots = new janvas.Canvas({
       });
     },
     resize: function () {
-      this.background.setWidth(this.$width).setHeight(this.$height);
       this.dots.forEach(function (dot) {
         dot.setBounding(this.$width, this.$height);
       }, this);

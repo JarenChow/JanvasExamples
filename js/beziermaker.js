@@ -14,17 +14,17 @@ var bezierMaker = new janvas.Canvas({
         this._r = 5;
         this.arc = new janvas.Arc($ctx, 0, 0, this._r);
         this.text = new janvas.Text($ctx);
-        this.initXY(x, y);
+        this.setStart(x, y);
         this.initStyles();
         this.highlight(true);
       }
 
       Dot.prototype = {
-        initXY: function (x, y) {
+        setStart: function (x, y) {
           this._x = x;
           this._y = y;
-          this.arc.initXY(x, y);
-          this.text.initXY(x + this._r * 2, y).setText(this.getReadableText());
+          this.arc.setStart(x, y);
+          this.text.setStart(x + this._r * 2, y).setText(this.getReadableText());
         },
         getReadableText: function () {
           return "p" + this._index + "(" + this._x + "," + this._y + ")";
@@ -52,7 +52,7 @@ var bezierMaker = new janvas.Canvas({
           this._lastY = this._y;
         },
         onmove: function (moveX, moveY) {
-          this.initXY(this._lastX + moveX, this._lastY + moveY);
+          this.setStart(this._lastX + moveX, this._lastY + moveY);
         },
         getX: function () {
           return this._x;
@@ -85,7 +85,6 @@ var bezierMaker = new janvas.Canvas({
   },
   methods: {
     init: function () {
-      this.background = new janvas.Rect(this.$ctx, 0, 0, this.$width, this.$height);
       this.dots = [];
       this.polyline = new janvas.Polyline(this.$ctx, 0, 0, []);
       this.bezier = new janvas.Bezier(this.$ctx, 0, 0, this.polyline.getPoints(), this.size * 2);
@@ -98,7 +97,7 @@ var bezierMaker = new janvas.Canvas({
       this.cursor.getStyle().setFillStyle("hsl(270, 80%, 50%)");
     },
     draw: function () {
-      this.background.clear(0, 0, this.$width, this.$height);
+      this.$clear();
       this.polyline.stroke();
       this.bezier.stroke();
       this.dots.forEach(function (dot) {
@@ -161,7 +160,7 @@ var bezierMaker = new janvas.Canvas({
           if (this.locked) this.locked.highlight(true);
         }
       }
-      this.hint.initXY(ev.$x, ev.$y).setText("(" + ev.$x + "," + ev.$y + ")");
+      this.hint.setStart(ev.$x, ev.$y).setText("(" + ev.$x + "," + ev.$y + ")");
     },
     mouseover: function () {
       this.$raf.resume();
@@ -178,22 +177,22 @@ var bezierMaker = new janvas.Canvas({
       switch (ev.key) {
         case "ArrowUp":
         case "w":
-          this.locked.initXY(this.locked.getX(), this.locked.getY() - increase);
+          this.locked.setStart(this.locked.getX(), this.locked.getY() - increase);
           this.polyline.update(this.locked.getX(), this.locked.getY(), this.locked.getIndex());
           break;
         case "ArrowDown":
         case "s":
-          this.locked.initXY(this.locked.getX(), this.locked.getY() + increase);
+          this.locked.setStart(this.locked.getX(), this.locked.getY() + increase);
           this.polyline.update(this.locked.getX(), this.locked.getY(), this.locked.getIndex());
           break;
         case "ArrowLeft":
         case "a":
-          this.locked.initXY(this.locked.getX() - increase, this.locked.getY());
+          this.locked.setStart(this.locked.getX() - increase, this.locked.getY());
           this.polyline.update(this.locked.getX(), this.locked.getY(), this.locked.getIndex());
           break;
         case "ArrowRight":
         case "d":
-          this.locked.initXY(this.locked.getX() + increase, this.locked.getY());
+          this.locked.setStart(this.locked.getX() + increase, this.locked.getY());
           this.polyline.update(this.locked.getX(), this.locked.getY(), this.locked.getIndex());
           break;
         case "Delete":
@@ -221,9 +220,6 @@ var bezierMaker = new janvas.Canvas({
           break;
       }
     },
-    resize: function () {
-      this.background.setWidth(this.$width).setHeight(this.$height);
-    },
     autoResize: function (flag) {
       this._autoResize = flag;
     }
@@ -246,7 +242,7 @@ var bezierMaker = new janvas.Canvas({
       }
       this.position += 2;
       if (this.position === transformedPoints.length) this.position = 0;
-      this.cursor.initXY(x1, y1).setAngle(Math.atan2(y1 - y2, x1 - x2));
+      this.cursor.setStart(x1, y1).setAnchorAngle(Math.atan2(y1 - y2, x1 - x2));
     }
   }
 });

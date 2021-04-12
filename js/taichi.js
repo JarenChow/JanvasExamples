@@ -46,7 +46,7 @@ var taichi = new janvas.Canvas({
         init: function (x, y) {
           this.x = x;
           this.y = y;
-          this.outer.initXY(x, y);
+          this.outer.setStart(x, y);
           this.left.init(x, y, x, y);
           this.right.init(x, y, x, y);
           this.top.init(x, y - this.r / 2, x, y);
@@ -94,10 +94,10 @@ var taichi = new janvas.Canvas({
             grd.count++;
             return true;
           } else {
-            this.outer.getStyle().setStrokeStyle(janvas.FillStrokeStyle.DEFAULT_STROKE_STYLE);
-            this.left.getStyle().setFillStyle(janvas.FillStrokeStyle.DEFAULT_FILL_STYLE);
-            this.top.getStyle().setFillStyle(janvas.FillStrokeStyle.DEFAULT_FILL_STYLE);
-            this.bottomSmall.getStyle().setFillStyle(janvas.FillStrokeStyle.DEFAULT_FILL_STYLE);
+            this.outer.getStyle().setStrokeStyle("#000000");
+            this.left.getStyle().setFillStyle("#000000");
+            this.top.getStyle().setFillStyle("#000000");
+            this.bottomSmall.getStyle().setFillStyle("#000000");
             this.right.getStyle().setFillStyle("white");
             this.bottom.getStyle().setFillStyle("white");
             this.topSmall.getStyle().setFillStyle("white");
@@ -155,7 +155,7 @@ var taichi = new janvas.Canvas({
       });
     },
     draw: function () {
-      this.background.clear(0, 0, this.$width, this.$height);
+      this.$clear();
       this.taichi.forEach(function (tc) {
         tc.draw();
       });

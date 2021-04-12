@@ -12,7 +12,7 @@ var cursor = new janvas.Canvas({
   components: {
     Button: (function () {
       function Button(ctx, text) {
-        this.rect = new janvas.Rect(ctx);
+        this.rect = new janvas.Rect(ctx,0,0,0,0);
         this.rect.getStyle().setLineWidth(2);
         this.text = new janvas.Text(ctx, 0, 0, text);
         this.text.getStyle().setFillStyle("white")
@@ -62,12 +62,10 @@ var cursor = new janvas.Canvas({
   },
   methods: {
     init: function () {
-      this.background = new janvas.Rect(this.$ctx, 0, 0);
       this._initCalc();
       this._initButtons();
     },
     resize: function () {
-      this.background.setWidth(this.$width).setHeight(this.$height);
       this._calc(this.$width, this.$height);
       this._resizeButtons();
     },
@@ -77,7 +75,7 @@ var cursor = new janvas.Canvas({
       }
     },
     draw: function () {
-      this.background.clear(0, 0, this.$width, this.$height);
+      this.$clear();
       this._drawButtons();
       if (this._button) this._button.draw();
     },

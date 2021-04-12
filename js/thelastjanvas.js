@@ -4,7 +4,7 @@ var theLastJanvas = new janvas.Canvas({
   interval: 16,
   components: {
     Dancer: (function () {
-      function Dancer($ctx, $cfg, hsl, size, x, y, struct) {
+      function Dancer($ctx, hsl, size, x, y, struct) {
         this.hsl = hsl;
         this.size = size;
         this._size = 16 * Math.sqrt(size);
@@ -17,7 +17,7 @@ var theLastJanvas = new janvas.Canvas({
           this.points.push(new Dancer.Point(size * point.x + x, size * point.y + y, point.fn));
         }, this);
         struct.links.forEach(function (link) {
-          this.links.push(new Dancer.Link($ctx, $cfg,
+          this.links.push(new Dancer.Link($ctx,
             hsl.clone().setLightness(hsl.getLightness() * link.lum),
             link.size * size / 3,
             this.points[link.p0],
@@ -64,8 +64,7 @@ var theLastJanvas = new janvas.Canvas({
         });
       };
 
-      Dancer.Link = function ($ctx, $cfg, hsl, size, p0, p1, force, isHead) {
-        this.$cfg = $cfg;
+      Dancer.Link = function ($ctx, hsl, size, p0, p1, force, isHead) {
         this.hsl = hsl;
         this.size = size;
         this._offset = size / 10;
@@ -73,20 +72,14 @@ var theLastJanvas = new janvas.Canvas({
         this.p1 = p1;
         this.distance = janvas.Utils.pythagorean(p1.x - p0.x, p1.y - p0.y);
         this.force = force || 0.5;
-        this.shadow = new janvas.ShadowStyle().setShadowColor("rgba(0, 0, 0, 0.5)")
-          .setShadowOffsetX(size / 4).setShadowOffsetY(size / 4);
+        this.isHead = isHead;
         this.startRect = new janvas.Rect($ctx, 0, 0, size / 5, size / 5);
         this.endRect = new janvas.Rect($ctx, 0, 0, size / 5, size / 5);
-        this.endRect.setMatrix(this.startRect.getMatrix());
-        if (isHead) {
-          this.head = new janvas.Arc($ctx, 0, 0, size / 2);
-          this.head.getStyle().setFillStyle(this.hsl.toHslString());
-          this._draw = this._drawHead;
-        } else {
-          this.body = new janvas.Line($ctx);
-          this.body.getStyle().setStrokeStyle(this.hsl.toHslString()).setLineWidth(size);
-          this._draw = this._drawBody;
-        }
+        this.body = new janvas.Line($ctx);
+        this.body.getStyle().setStrokeStyle(this.hsl.toHslString())
+          .setLineWidth(size).setLineCap("round")
+          .setShadowColor("rgba(0, 0, 0, 0.5)")
+          .setShadowOffsetX(size / 4).setShadowOffsetY(size / 4);
       };
 
       Dancer.Link.prototype = {
@@ -103,19 +96,14 @@ var theLastJanvas = new janvas.Canvas({
           p0.y -= sy * r1;
         },
         draw: function () {
-          this.$cfg.setShadowStyle(this.shadow);
-          this._draw();
-          this.$cfg.resetShadowStyle();
           var p0 = this.p0, p1 = this.p1, o = this._offset;
+          if (this.isHead) this.body.setStart(p1.x, p1.y);
+          else this.body.setStart(p0.x, p0.y);
+          this.body.setEnd(p1.x, p1.y).stroke();
           this.startRect.getMatrix().setAngle(Math.atan2(p1.y - p0.y, p1.x - p0.x));
+          this.endRect.getMatrix().setAngle(this.startRect.getMatrix().getAngle());
           this.startRect.init(p0.x - o, p0.y - o, p0.x, p0.y).fill();
           this.endRect.init(p1.x - o, p1.y - o, p1.x, p1.y).fill();
-        },
-        _drawHead: function () {
-          this.head.initXY(this.p1.x, this.p1.y).fill();
-        },
-        _drawBody: function () {
-          this.body.initXY(this.p0.x, this.p0.y).setEndX(this.p1.x).setEndY(this.p1.y).stroke();
         }
       };
 
@@ -258,11 +246,9 @@ var theLastJanvas = new janvas.Canvas({
       this.footer.getStyle().setFillStyle("#222");
       this.dancers = [];
       this.pointer = {x: 0, y: 0, dancerDrag: null, pointDrag: null, ground: 0, context: this};
-      this._globalStyle = new janvas.GlobalStyle().setLineCap("round");
       this._initDancer();
     },
     resize: function () {
-      this.$cfg.setGlobalStyle(this._globalStyle);
       var w = this.$width, h = this.$height;
       this.background.setWidth(w).setHeight(h);
       this.header.setWidth(w).setHeight(h * 0.15);
@@ -293,7 +279,7 @@ var theLastJanvas = new janvas.Canvas({
       }
     },
     _pushDancer: function (hsl, size, x, y) {
-      var dancer = new this.Dancer(this.$ctx, this.$cfg, hsl, size, x, y, this.struct);
+      var dancer = new this.Dancer(this.$ctx, hsl, size, x, y, this.struct);
       dancer.onDragEnd = this._onDancerDragEnd;
       this.dancers.push(dancer);
     },

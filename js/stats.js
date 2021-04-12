@@ -86,6 +86,7 @@ var stats = new janvas.Canvas({
       }
       this.showPanel(0);
       this.$raf.resume();
+      this.$wrapper.style.cursor = "pointer";
     },
     update: function () {
       var ts = performance.now();

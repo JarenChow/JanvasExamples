@@ -40,8 +40,8 @@ var coordinate = new janvas.Canvas({
   events: {
     resize: function () {
       this.background.setWidth(this.$width).setHeight(this.$height);
-      this.xAxis.initXY(this.$width, 0);
-      this.yAxis.initXY(0, this.$height);
+      this.xAxis.setStart(this.$width, 0);
+      this.yAxis.setStart(0, this.$height);
       this.adjustLength(Math.floor(this.$width / this._span - 0.2), this.xTexts, this.xLines, true);
       this.adjustLength(Math.floor(this.$height / this._span - 0.2), this.yTexts, this.yLines, false);
       this.setStyles();

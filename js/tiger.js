@@ -18,8 +18,7 @@ var tiger = new janvas.Canvas({
         this.svgStyle2shape(style, "fillStyle", fill);
         this.svgStyle2shape(style, "strokeStyle", stroke);
         if (fill === null && stroke === null) {
-          style.setFillStyle(janvas.FillStrokeStyle.DEFAULT_FILL_STYLE)
-            .setStrokeStyle(janvas.FillStrokeStyle.DEFAULT_STROKE_STYLE);
+          style.setFillStyle("#000000").setStrokeStyle("#000000");
         }
         style.setLineWidth(isNaN(lineWidth) ? 1 : lineWidth);
         style.lineWidthCache = style.getLineWidth();
@@ -28,7 +27,7 @@ var tiger = new janvas.Canvas({
       this.draw();
     },
     draw: function () {
-      this.background.clear(0, 0, this.$width, this.$height);
+      this.$clear();
       this.shapes.forEach(function (shape) {
         shape.fillStroke();
       });

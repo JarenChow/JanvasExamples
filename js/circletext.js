@@ -48,7 +48,6 @@ var circleText = new janvas.Canvas({
   },
   events: {
     keydown: function (ev) {
-      if (ev.target !== document.body) return;
       var key = ev.key;
       if (key === "Backspace") this.str = this.str.substring(0, this.str.length - 1);
       else if (key.length === 1) this.str += key.toUpperCase();

@@ -46,13 +46,13 @@ var antv = new janvas.Canvas({
         onlyFill: function () {
           this._arc.fill();
         },
-        in: function (bg) {
+        in: function (rect) {
           return janvas.Collision.rect(
             this.x - this._defaultRadius * this._scale,
             this.y - this._defaultRadius * this._scale,
             this.x + this._defaultRadius * this._scale,
             this.y + this._defaultRadius * this._scale,
-            bg.sx, bg.sy, bg.sw, bg.sh);
+            rect.getLeft(), rect.getTop(), rect.getRight(), rect.getBottom());
         },
         isPointInPath: function (x, y) {
           return this._arc.isPointInPath(x, y);
@@ -94,7 +94,7 @@ var antv = new janvas.Canvas({
           if (this._show) this.line.stroke();
         },
         refresh: function () {
-          this.line.initXY(this.source.getX(), this.source.getY())
+          this.line.setStart(this.source.getX(), this.source.getY())
             .setEndX(this.target.getX()).setEndY(this.target.getY());
         },
         setLineWidth: function (scale) {
@@ -105,41 +105,36 @@ var antv = new janvas.Canvas({
         }
       };
 
-      function Hint($ctx, $cfg) {
+      function Hint($ctx) {
         this._show = false;
         this._of = this._pdt = 3; // offset, paddingLeft, paddingTop
         this._pdl = 5;
-        this.$cfg = $cfg;
-        this.roundRect = new janvas.RoundRect($ctx, 0, 0, 0, 0);
-        this.roundRect.getStyle().setFillStyle("white").setStrokeStyle("white");
+        this.roundRect = new janvas.RoundRect($ctx, 0, 0, 0, 0, this._pdl);
+        this.roundRect.getStyle().setFillStyle("white").setStrokeStyle("white")
+          .setShadowBlur(20).setShadowColor("grey");
         this.text = new janvas.Text($ctx, 0, 0, "");
         this.text.getStyle().setFont("12px sans-serif").setTextBaseline("bottom");
-        this.shadow = new janvas.ShadowStyle().setShadowBlur(20).setShadowColor("grey");
       }
 
       Hint.prototype = {
         draw: function () {
           if (this._show) {
-            this.$cfg.setShadowStyle(this.shadow);
             this.roundRect.fillStroke();
-            this.$cfg.resetShadowStyle();
             this.text.fill();
           }
         },
         setXY: function (x, y) {
           x += this._of;
           y -= this._of;
-          this.text.initXY(x + this._pdl, y - this._pdt);
-          this.roundRect.initXY(x, y).setWidth(this._textWidth + this._pdl * 2)
-            .setHeight(-(this._textHeight + this._pdt * 2)).setRadius();
+          this.text.setStart(x + this._pdl, y - this._pdt);
+          this.roundRect.setStart(x, y);
         },
         setLabel: function (label) {
           if (this.label === label) return;
           this.label = label;
           this.text.setText(label);
-          var metrics = janvas.Utils.measureText(label, this.text.getStyle().getFont());
-          this._textWidth = metrics.width;
-          this._textHeight = metrics.height;
+          this.roundRect.setWidth(this.text.getActualBoundingBoxWidth() + this._pdl * 2)
+            .setHeight(-(this.text.getActualBoundingBoxHeight() + this._pdt * 2));
         },
         show: function (flag) {
           this._show = flag;
@@ -166,11 +161,11 @@ var antv = new janvas.Canvas({
     init: function () {
       this.nodes = [];
       this.edges = [];
-      this.hint = new this.factory.Hint(this.$ctx, this.$cfg);
+      this.hint = new this.factory.Hint(this.$ctx);
       this.background = new janvas.Rect(this.$ctx, 0, 0, this.$width, this.$height);
     },
     draw: function () {
-      this.background.clear(0, 0, this.$width, this.$height);
+      this.$clear();
       this.edges.forEach(function (edge) {
         edge.draw();
       });

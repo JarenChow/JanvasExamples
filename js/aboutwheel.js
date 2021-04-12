@@ -21,7 +21,7 @@ var aboutWheel = new janvas.Canvas({
       this.scaleAnimation();
     },
     draw: function () {
-      this.background.clear(0, 0, this.$width, this.$height);
+      this.$clear();
       this.img.draw();
       if (this.img._mousein) this.img.stroke();
     }

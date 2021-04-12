@@ -110,14 +110,13 @@ var codeRain = new janvas.Canvas({
       for (var serialId in this.pinMap) { // 尾巴遗留处留下一个文本并渐变消失
         var pin = this.pinMap[serialId];
         if (pin.alpha > pin.decre) {
-          this.$cfg.setGlobalAlpha((pin.alpha -= pin.decre) / 255); // 设置全局透明度
+          pin.getStyle().setAlpha((pin.alpha -= pin.decre) / 255); // 设置全局透明度
           pin.fill();
         } else {
           delete this.pinMap[pin.serialId];
           this.pinStack.push(pin); // 使用字典和栈回收管理这些 Text 文本
         }
       }
-      this.$cfg.resetGlobalAlpha();
     },
     _initChars: function () { // 初始化字符数组
       if (this.chars.length) return;

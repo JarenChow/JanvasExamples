@@ -1,28 +1,26 @@
 var sudoku = new janvas.Canvas({
   container: "#app",
   components: {
-    factory: (function () {
-      var ctx;
-
+    Grid: (function () {
       function _error(error) {
         this._error = error;
         this.getStyle().setFillStyle(error ?
           "#ed1524" : this.getStyle()._lastFillStyle);
       }
 
-      function Grid() {
+      function Grid($ctx) {
         this.rects = [];
         this.texts = [];
         this.numbers = [];
         for (var i = 0; i < 3; i++) {
           var t1 = [], t2 = [], t3 = new Array(3);
           for (var j = 0; j < 3; j++) {
-            var t = new janvas.Rect(ctx);
+            var t = new janvas.Rect($ctx);
             t.getStyle().setFillStyle("#fefefe").setStrokeStyle("#bdc4d3");
             t.i = i;
             t.j = j;
             t1.push(t);
-            t = new janvas.Text(ctx, 0, 0, "");
+            t = new janvas.Text($ctx, 0, 0, "");
             t.error = _error;
             t.getStyle().setTextAlign("center").setTextBaseline("middle");
             t2.push(t);
@@ -32,21 +30,21 @@ var sudoku = new janvas.Canvas({
           this.texts.push(t2);
           this.numbers.push(t3);
         }
-        this.border = new janvas.Rect(ctx);
+        this.border = new janvas.Rect($ctx);
         this.border.getStyle().setStrokeStyle("#000000");
       }
 
       Grid.prototype = {
-        initXY: function (sx, sy) {
+        setStart: function (sx, sy) {
           var s = this._size / 3, o = s / 2;
           for (var i = 0; i < 3; i++) {
             for (var j = 0; j < 3; j++) {
               var x = sx + j * s, y = sy + i * s;
-              this.rects[i][j].initXY(x, y);
-              this.texts[i][j].initXY(x + o, y + o);
+              this.rects[i][j].setStart(x, y);
+              this.texts[i][j].setStart(x + o, y + o);
             }
           }
-          this.border.initXY(sx, sy);
+          this.border.setStart(sx, sy);
         },
         resize: function (sx, sy, size) {
           this._size = size;
@@ -55,13 +53,13 @@ var sudoku = new janvas.Canvas({
           for (var i = 0; i < 3; i++) {
             for (var j = 0; j < 3; j++) {
               var x = sx + j * s, y = sy + i * s;
-              this.rects[i][j].initXY(x, y).setWidth(s).setHeight(s)
+              this.rects[i][j].setStart(x, y).setWidth(s).setHeight(s)
                 .getStyle().setLineWidth(Math.round(size / 120));
-              this.texts[i][j].initXY(x + o, y + o)
+              this.texts[i][j].setStart(x + o, y + o)
                 .getStyle().setFont(font);
             }
           }
-          this.border.initXY(sx, sy).setWidth(size).setHeight(size)
+          this.border.setStart(sx, sy).setWidth(size).setHeight(size)
             .getStyle().setLineWidth(Math.round(size / 60));
         },
         draw: function () {
@@ -166,26 +164,20 @@ var sudoku = new janvas.Canvas({
         }
       };
 
-      return {
-        init: function (context) {
-          ctx = context.$ctx;
-        },
-        Grid: Grid
-      }
+      return Grid;
     }())
   },
   methods: {
     init: function () {
-      this.factory.init(this);
       this.grids = [];
       for (var i = 0; i < 3; i++) {
         var t = [];
         for (var j = 0; j < 3; j++) {
-          t.push(new this.factory.Grid());
+          t.push(new this.Grid(this.$ctx));
         }
         this.grids.push(t);
       }
-      this.selector = new this.factory.Grid();
+      this.selector = new this.Grid(this.$ctx);
       this.selectorNumbers = [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
       this.selector.setNumbers(this.selectorNumbers, true);
       this.background = new janvas.Rect(this.$ctx, 0, 0);
@@ -205,7 +197,7 @@ var sudoku = new janvas.Canvas({
         sx = t;
       }
       size = w - sx * 2;
-      this.mainground.initXY(sx, sy).setWidth(size).setHeight(size);
+      this.mainground.setStart(sx, sy).setWidth(size).setHeight(size);
       this._offset = (size /= 3) / 2;
       for (var i = 0; i < 3; i++) {
         for (var j = 0; j < 3; j++) {
@@ -668,7 +660,7 @@ var sudoku = new janvas.Canvas({
           for (var j = 0; j < 3; j++) {
             this._grid = this.grids[i][j];
             if ((rect = this._grid.isPointInPath(ev.$x, ev.$y))) {
-              this.selector.initXY(ev.$x - this._offset, ev.$y - this._offset);
+              this.selector.setStart(ev.$x - this._offset, ev.$y - this._offset);
               this.selector.activate = true;
               this.selector.eventmove(ev.$x, ev.$y);
               this._rect = rect;

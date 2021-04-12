@@ -5,7 +5,7 @@ var clock = new janvas.Canvas({
     init: function () {
       var bezier = new janvas.Bezier(this.$ctx, 0, 0, [0, 0, 100, 1457, 200, -460, 300, 989, 400, 405, 500, 500]);
       bezier.getMatrix().setScale(1 / 500, 1 / 500);
-      this.animation = bezier.setTransform().getTransformedPoints().filter(function () {
+      this.animation = bezier.getTransformedPoints().filter(function () {
         return arguments[1] % 2 === 1;
       });
       this.background = new janvas.Rect(this.$ctx); // 背景
@@ -20,25 +20,32 @@ var clock = new janvas.Canvas({
       this.initStyles();
     },
     initStyles: function () {
-      this.shadow = new janvas.ShadowStyle().setShadowColor("hsla(0, 0%, 0%, 0.8)");
-      this.shadow.basis = new janvas.Point(0, 0);
-      this.shadow.cursor = new janvas.Point(0, 0);
+      this._setShadow("Color", "hsla(0, 0%, 0%, 0.8)");
+      this.shadowBasis = new janvas.Point(0, 0);
+      this.shadowCursor = new janvas.Point(0, 0);
       this.background.getStyle().setFillStyle("hsl(0, 0%, 63%)"); // 背景
-      this.bottom.shadow = new janvas.ShadowStyle().setShadowColor("hsla(0, 0%, 0%, 0.5)");
-      this.outer.shadow = new janvas.ShadowStyle().setShadowColor("hsla(0, 0%, 0%, 0.5)");
+      this.bottom.border.getStyle().setShadowColor("hsla(0, 0%, 0%, 0.5)");
+      this.outer.border.getStyle().setShadowColor("hsla(0, 0%, 0%, 0.5)");
       this.dot.getStyle().setStrokeStyle("hsl(0, 0%, 63%)");
+    },
+    _setShadow: function (type, value) {
+      this.bottom.getStyle()["setShadow" + type](value);
+      this.hour.getStyle()["setShadow" + type](value);
+      this.minute.getStyle()["setShadow" + type](value);
+      this.second.getStyle()["setShadow" + type](value);
+      this.dot.getStyle()["setShadow" + type](value);
     },
     resizeStyles: function () {
       var min = Math.min(this.$width, this.$height);
-      this.shadow.setShadowBlur(min / 140);
-      this.shadow.basis.init(min / 35, 0);
+      this._setShadow("Blur", min / 140);
+      this.shadowBasis.init(min / 35, 0);
       this.gradient("hsl(0, 0%, 100%)", "hsl(0, 0%, 90%)",
         this.bottom, this.hour, this.minute, this.dot);
-      this.bottom.border.getStyle().setLineWidth(min / 35);
-      this.bottom.shadow.setShadowBlur(min / 140 * 3).setShadowOffsetX(-this.$width);
+      this.bottom.border.getStyle().setLineWidth(min / 35)
+        .setShadowBlur(min / 140 * 3).setShadowOffsetX(-this.$width);
       this.gradient("hsl(0, 0%, 40%)", "hsl(0, 0%, 23%)", this.outer);
-      this.outer.border.getStyle().setLineWidth(min / 35);
-      this.outer.shadow.setShadowBlur(min / 70).setShadowOffsetX(-this.$width);
+      this.outer.border.getStyle().setLineWidth(min / 35)
+        .setShadowBlur(min / 70).setShadowOffsetX(-this.$width);
       this.gradient("hsl(0, 80%, 70%)", "hsl(0, 80%, 50%)", this.second);
       this.dot.getStyle().setLineWidth(1 / this.$dpr);
     },
@@ -64,21 +71,13 @@ var clock = new janvas.Canvas({
     },
     draw: function () {
       this.background.fill();
-      this.$cfg.setShadowStyle(this.shadow);
       this.bottom.fill();
-      this.$cfg.setShadowStyle(this.bottom.shadow);
       this.bottom.clip().border.stroke().restore();
-      this.$cfg.resetShadowStyle();
-      this.outer.fill();
-      this.$cfg.setShadowStyle(this.outer.shadow);
-      this.outer.border.stroke();
-      this.$cfg.setShadowStyle(this.shadow);
+      this.outer.fill().border.stroke();
       this.hour.fill();
       this.minute.fill();
       this.second.fill();
-      this.dot.fill();
-      this.$cfg.resetShadowStyle();
-      this.dot.stroke();
+      this.dot.strokeFill();
     }
   },
   events: {
@@ -87,13 +86,13 @@ var clock = new janvas.Canvas({
         size = Math.min(this.$width, this.$height) * goldenRatio,
         cx = this.$width / 2, cy = this.$height / 2;
       this._sizeBy2 = size / 2;
-      this.background.initXY(0, 0).setWidth(this.$width).setHeight(this.$height);
+      this.background.setStart(0, 0).setWidth(this.$width).setHeight(this.$height);
       this.bottom.init(cx - this._sizeBy2, cy - this._sizeBy2, cx, cy)
         .setWidth(size).setHeight(size).setRadius(size / 4);
-      this.bottom.border.initXY(this.bottom.getStartX() + this.$width, this.bottom.getStartY())
+      this.bottom.border.setStart(this.bottom.getStartX() + this.$width, this.bottom.getStartY())
         .setWidth(size).setHeight(size).setRadius(size / 4);
-      this.outer.initXY(cx, cy).setRadius(size * goldenRatio / 2);
-      this.outer.border.initXY(cx + this.$width, cy).setRadius(this.outer.getRadius());
+      this.outer.setStart(cx, cy).setRadius(size * goldenRatio / 2);
+      this.outer.border.setStart(cx + this.$width, cy).setRadius(this.outer.getRadius());
       var offset = this.outer.getRadius() * Math.pow(goldenRatio, 18);
       this.second.init(cx - offset * 8, cy - offset, cx, cy)
         .setWidth(this.outer.getRadius() * goldenRatio + offset * 8)
@@ -106,7 +105,7 @@ var clock = new janvas.Canvas({
       this.hour.init(cx - offset, cy - offset, cx, cy)
         .setWidth(this.outer.getRadius() * Math.pow(goldenRatio, 4) + offset)
         .setHeight(offset * 2).setRadius(offset);
-      this.dot.initXY(cx, cy).setRadius(offset / Math.pow(goldenRatio, 2));
+      this.dot.setStart(cx, cy).setRadius(offset / Math.pow(goldenRatio, 2));
       this.resizeStyles();
     },
     visibilitychange: function (visible) {
@@ -143,15 +142,16 @@ var clock = new janvas.Canvas({
       this.second.getMatrix().setAngle(this._allSeconds / 60 * Math.PI * 2 - Math.PI / 2);
       this._secondLastAngle = this.second.getMatrix().getAngle();
       // if (this.hours === 5) {
-      //   if (this.minutes >= 45) this.shadow.cursor.copy(this.shadow.basis).scaleX(this._allSeconds % 900 / 900);
+      //   if (this.minutes >= 45) this.shadowCursor.copy(this.shadowBasis).scaleX(this._allSeconds % 900 / 900);
       // } else
       //   if (this.hours >= 6 && this.hours < 18) { // 设置 shadow 随时间变化的“角度”
-      this.shadow.cursor.copy(this.shadow.basis).rotate((this._allSeconds - 6 * 3600) % 43200 / (12 * 3600) * Math.PI);
+      this.shadowCursor.copy(this.shadowBasis).rotate((this._allSeconds - 6 * 3600) % 43200 / (12 * 3600) * Math.PI);
       // }
       // else if (this.hours === 18) {
-      // if (this.minutes < 15) this.shadow.cursor.copy(this.shadow.basis).inverseX().scaleX(1 - this._allSeconds % 900 / 900);
+      // if (this.minutes < 15) this.shadowCursor.copy(this.shadowBasis).inverseX().scaleX(1 - this._allSeconds % 900 / 900);
       // }
-      this.shadow.setShadowOffsetX(this.shadow.cursor.getX()).setShadowOffsetY(this.shadow.cursor.getY());
+      this._setShadow("OffsetX", this.shadowCursor.getX());
+      this._setShadow("OffsetY", this.shadowCursor.getY());
     }
   }
 });
