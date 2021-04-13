@@ -23,18 +23,16 @@
   var helloWorld = new janvas.Canvas({
     container: "#app", // 找到容器 id
     methods: {
-      init: function () { // 初始化
+      init: function () { // 初始化，此回调仅会调用一次
         this.text = new janvas.Text(this.$ctx, 0, 0, "HelloWorld"); // new 一个 Text
         this.text.getStyle().setFont("small-caps bold 128px courier")
           .setTextAlign("center").setTextBaseline("middle"); // 给 Text 设置样式
       },
-      draw: function () {
+      resize: function () { // 在每次 <canvas> 大小发生改变时回调
+        this.text.setStart(this.$width / 2, this.$height / 2); // 置于中间
+      },
+      draw: function () { // 在此回调时
         this.text.fill(); // 让 Text 进行绘制
-      }
-    },
-    events: {
-      resize: function () { // 添加 resize 事件监听
-        this.text.initXY(this.$width / 2, this.$height / 2); // 置于中间
       }
     }
   });
