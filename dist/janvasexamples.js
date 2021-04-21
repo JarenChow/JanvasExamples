@@ -1,4 +1,4 @@
-// https://github.com/JarenChow/Janvas Created by JarenChow in 2020 janvas.js v1.3.4
+// https://github.com/JarenChow/Janvas Created by JarenChow in 2020 janvas.js v1.3.6
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('janvas')) :
     typeof define === 'function' && define.amd ? define(['janvas'], factory) :
@@ -18,8 +18,8 @@ function coordinate(container) {
   methods: {
     init: function () {
       this.background = new janvas.Rect(this.$ctx, 0, 0, 0, 0);
-      this.xAxis = new janvas.Arrow(this.$ctx, 0, 0, 0, 0);
-      this.yAxis = new janvas.Arrow(this.$ctx, 0, 0, 0, 0);
+      this.xAxis = new janvas.Line(this.$ctx, 0, 0, 0, 0);
+      this.yAxis = new janvas.Line(this.$ctx, 0, 0, 0, 0);
       this.xLines = [];
       this.xTexts = [];
       this.yLines = [];
@@ -48,8 +48,8 @@ function coordinate(container) {
   events: {
     resize: function () {
       this.background.setWidth(this.$width).setHeight(this.$height);
-      this.xAxis.setStart(this.$width, 0);
-      this.yAxis.setStart(0, this.$height);
+      this.xAxis.setEnd(this.$width, 0);
+      this.yAxis.setEnd(0, this.$height);
       this.adjustLength(Math.floor(this.$width / this._span - 0.2), this.xTexts, this.xLines, true);
       this.adjustLength(Math.floor(this.$height / this._span - 0.2), this.yTexts, this.yLines, false);
       this.setStyles();
@@ -1144,7 +1144,7 @@ function beziermaker(container) {
       this.hint = new janvas.Text(this.$ctx, 0, 0, "");
       this.hint.getStyle().setFillStyle("rgba(0, 0, 0, 0.5)")
         .setFont("12px sans-serif").setTextAlign("end").setTextBaseline("middle");
-      this.cursor = new janvas.ArrowHead(this.$ctx, 0, 0);
+      this.cursor = new janvas.Triangle(this.$ctx, 0, 0);
       this.cursor.getStyle().setFillStyle("hsl(270, 80%, 50%)");
     },
     draw: function () {
@@ -1293,7 +1293,7 @@ function beziermaker(container) {
       }
       this.position += 2;
       if (this.position === transformedPoints.length) this.position = 0;
-      this.cursor.setStart(x1, y1).setAnchorAngle(Math.atan2(y1 - y2, x1 - x2));
+      this.cursor.setStart(x1, y1).setRotation(Math.atan2(y1 - y2, x1 - x2));
     }
   }
 });
@@ -1583,7 +1583,7 @@ function aboutedge(container) {
         .setTextBaseline("middle");
       this.edge.setEmptyLength(janvas.Utils.measureTextWidth(this.text.getText(),
         this.text.getStyle().getFont()) / 0.809);
-      this.head = new janvas.ArrowHead(this.$ctx).setHeadLength(12);
+      this.head = new janvas.Triangle(this.$ctx).setLength(12);
       this.head.getStyle().setFillStyle("hsl(270, 80%, 60%)");
       this.setCurvePropsAndDraw();
     },
@@ -1599,7 +1599,7 @@ function aboutedge(container) {
       this.start.fill();
       this.end.fill();
       this.an.fill();
-      this.head.setAnchorAngle(this.edge.getAnchorAngle()).fill();
+      this.head.setRotation(this.edge.getAnchorAngle()).fill();
     }
   },
   events: {

@@ -93,7 +93,7 @@ var bezierMaker = new janvas.Canvas({
       this.hint = new janvas.Text(this.$ctx, 0, 0, "");
       this.hint.getStyle().setFillStyle("rgba(0, 0, 0, 0.5)")
         .setFont("12px sans-serif").setTextAlign("end").setTextBaseline("middle");
-      this.cursor = new janvas.ArrowHead(this.$ctx, 0, 0);
+      this.cursor = new janvas.Triangle(this.$ctx, 0, 0);
       this.cursor.getStyle().setFillStyle("hsl(270, 80%, 50%)");
     },
     draw: function () {
@@ -242,7 +242,7 @@ var bezierMaker = new janvas.Canvas({
       }
       this.position += 2;
       if (this.position === transformedPoints.length) this.position = 0;
-      this.cursor.setStart(x1, y1).setAnchorAngle(Math.atan2(y1 - y2, x1 - x2));
+      this.cursor.setStart(x1, y1).setRotation(Math.atan2(y1 - y2, x1 - x2));
     }
   }
 });

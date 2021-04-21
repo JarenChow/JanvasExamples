@@ -20,7 +20,7 @@ var aboutEdge = new janvas.Canvas({
         .setTextBaseline("middle");
       this.edge.setEmptyLength(janvas.Utils.measureTextWidth(this.text.getText(),
         this.text.getStyle().getFont()) / 0.809);
-      this.head = new janvas.ArrowHead(this.$ctx).setHeadLength(12);
+      this.head = new janvas.Triangle(this.$ctx).setLength(12);
       this.head.getStyle().setFillStyle("hsl(270, 80%, 60%)");
       this.setCurvePropsAndDraw();
     },
@@ -36,7 +36,7 @@ var aboutEdge = new janvas.Canvas({
       this.start.fill();
       this.end.fill();
       this.an.fill();
-      this.head.setAnchorAngle(this.edge.getAnchorAngle()).fill();
+      this.head.setRotation(this.edge.getAnchorAngle()).fill();
     }
   },
   events: {
