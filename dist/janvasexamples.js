@@ -1,4 +1,4 @@
-// https://github.com/JarenChow/Janvas Created by JarenChow in 2020 janvas.js v1.3.6
+// https://github.com/JarenChow/Janvas Created by JarenChow in 2020 janvas.js v1.3.7
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('janvas')) :
     typeof define === 'function' && define.amd ? define(['janvas'], factory) :
@@ -1184,7 +1184,7 @@ function beziermaker(container) {
         } else {
           if (this.locked) this.locked.highlight(false);
           this.dots.push(this.locked = this.current = this.factory.newDot(this.$ctx, ev.$x, ev.$y));
-          this.polyline.insert(ev.$x, ev.$y);
+          this.polyline.append(ev.$x, ev.$y);
         }
         this.locked.mark();
       }
@@ -1193,11 +1193,11 @@ function beziermaker(container) {
       if (ev.buttons === 2) { // 鼠标右键
         this.dots.forEach(function (dot) {
           dot.onmove(ev.$moveX, ev.$moveY);
-          this.polyline.update(dot.getX(), dot.getY(), dot.getIndex());
+          this.polyline.update(dot.getIndex(), dot.getX(), dot.getY());
         }, this);
       } else if (ev.buttons === 1) { // 鼠标左键
         this.locked.onmove(ev.$moveX, ev.$moveY);
-        this.polyline.update(this.locked.getX(), this.locked.getY(), this.locked.getIndex());
+        this.polyline.update(this.locked.getIndex(), this.locked.getX(), this.locked.getY());
       } else { // 无按键，默认行为
         if (this.current) this.current.highlight(false);
         this.current = void (0);
@@ -1229,22 +1229,22 @@ function beziermaker(container) {
         case "ArrowUp":
         case "w":
           this.locked.setStart(this.locked.getX(), this.locked.getY() - increase);
-          this.polyline.update(this.locked.getX(), this.locked.getY(), this.locked.getIndex());
+          this.polyline.update(this.locked.getIndex(), this.locked.getX(), this.locked.getY());
           break;
         case "ArrowDown":
         case "s":
           this.locked.setStart(this.locked.getX(), this.locked.getY() + increase);
-          this.polyline.update(this.locked.getX(), this.locked.getY(), this.locked.getIndex());
+          this.polyline.update(this.locked.getIndex(), this.locked.getX(), this.locked.getY());
           break;
         case "ArrowLeft":
         case "a":
           this.locked.setStart(this.locked.getX() - increase, this.locked.getY());
-          this.polyline.update(this.locked.getX(), this.locked.getY(), this.locked.getIndex());
+          this.polyline.update(this.locked.getIndex(), this.locked.getX(), this.locked.getY());
           break;
         case "ArrowRight":
         case "d":
           this.locked.setStart(this.locked.getX() + increase, this.locked.getY());
-          this.polyline.update(this.locked.getX(), this.locked.getY(), this.locked.getIndex());
+          this.polyline.update(this.locked.getIndex(), this.locked.getX(), this.locked.getY());
           break;
         case "Delete":
           if (this.dots.length > 0) {
