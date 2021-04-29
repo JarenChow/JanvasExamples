@@ -1,4 +1,4 @@
-// https://github.com/JarenChow/Janvas Created by JarenChow in 2020 janvas.js v1.3.7
+// https://github.com/JarenChow/Janvas Created by JarenChow in 2020 janvas.js v1.3.8
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('janvas')) :
     typeof define === 'function' && define.amd ? define(['janvas'], factory) :
@@ -58,7 +58,7 @@ function coordinate(container) {
   functions: {
     setStyles: function () {
       this.background.getStyle().setFillStyle(this._backgroundColor);
-      this.oText.getStyle().setFont(this._font).setTextBaseline("top");
+      this.oText.getStyle().setFont(this._font).setTextAlign("left").setTextBaseline("top");
       this.xLines.forEach(function (line) {
         line.getStyle().setStrokeStyle(this._dashColor).setLineDash(this._dash);
       }, this);
@@ -69,7 +69,7 @@ function coordinate(container) {
         text.getStyle().setFont(this._font).setTextAlign("center").setTextBaseline("top");
       }, this);
       this.yTexts.forEach(function (text) {
-        text.getStyle().setFont(this._font).setTextBaseline("middle");
+        text.getStyle().setFont(this._font).setTextAlign("left").setTextBaseline("middle");
       }, this);
     },
     adjustLength: function (count, texts, lines, inAxisX) {
@@ -617,8 +617,8 @@ function tiger(container) {
     wheel: function (ev) {
       ev.preventDefault();
       this.shapes.forEach(function (shape) {
-        var targetSx = ev.$x + (shape.getCenterX() - ev.$x) * ev.$scaling,
-          targetSy = ev.$y + (shape.getCenterY() - ev.$y) * ev.$scaling;
+        var targetSx = ev.$x + (shape.getOriginX() - ev.$x) * ev.$scaling,
+          targetSy = ev.$y + (shape.getOriginY() - ev.$y) * ev.$scaling;
         shape.init(targetSx, targetSy, targetSx, targetSy)
           .getMatrix().setScale(ev.$scale, ev.$scale);
       });
@@ -1509,7 +1509,7 @@ function aboutwheel(container) {
        *   2. 中心点不为 0, 0
        *     这种情况可选择缩放对象的 startX, startY
        *       因为存在中心点，所以在缩放后，需校准一次 offset，值为 _sx|_sy*(1-scale)
-       *     也可以优先选择缩放对象的 centerX, centerY
+       *     也可以优先选择缩放对象的 originX, originY
        *       这样子就无需校准对象的 offset
        * 以上为笛卡尔坐标系内对象的缩放内容，当存在中心点时优先缩放中心点而不是起始绘制点
        * 其实就是一个比例问题（以下内容：target为目标点，event为事件点，point为对象点）
@@ -1525,8 +1525,8 @@ function aboutwheel(container) {
         this.img._sy * (1 - this.scale)
       );*/
       // 方式二（推荐）：
-      // var targetCx = ev.$x + (this.img.getCenterX() - ev.$x) * ev.$scaling,
-      //   targetCy = ev.$y + (this.img.getCenterY() - ev.$y) * ev.$scaling;
+      // var targetCx = ev.$x + (this.img.getOriginX() - ev.$x) * ev.$scaling,
+      //   targetCy = ev.$y + (this.img.getOriginY() - ev.$y) * ev.$scaling;
       // this.img.init(targetCx - this.size, targetCy - this.size, targetCx, targetCy)
       //   .getMatrix().setScale(ev.$scale, ev.$scale);
       // 方式三：方式二的简单动画版本，有需求时有必要写进 components 里进行实现，以便解耦
@@ -1538,10 +1538,10 @@ function aboutwheel(container) {
     scaleAnimation: function () {
       if (this.img.animationQueue.length && this.img.count === this.img.maxCount) {
         var ev = this.img.animationQueue.pop();
-        this.img.lastCx = this.img.getCenterX();
-        this.img.lastCy = this.img.getCenterY();
-        this.img.targetCx = ev.$x + (this.img.getCenterX() - ev.$x) * ev.$scaling;
-        this.img.targetCy = ev.$y + (this.img.getCenterY() - ev.$y) * ev.$scaling;
+        this.img.lastCx = this.img.getOriginX();
+        this.img.lastCy = this.img.getOriginY();
+        this.img.targetCx = ev.$x + (this.img.getOriginX() - ev.$x) * ev.$scaling;
+        this.img.targetCy = ev.$y + (this.img.getOriginY() - ev.$y) * ev.$scaling;
         this.img.lastScale = ev.$lastScale;
         this.img.targetScale = ev.$scale;
         this.img.count = 0;
@@ -3198,60 +3198,56 @@ sudoku.simpleRandom(0.4);                      // 随机一个数独 puzzle，�
 function cursor(container) {
   return new janvas.Canvas({
   container: container,
-  duration: 1000,
-  props: {
-    data: ["alias", "help", "copy", "progress", "wait", "crosshair", "no-drop",
-      "not-allowed", "text", "vertical-text", "col-resize", "row-resize", "zoom-in", "zoom-out",
-      "move", "all-scroll", "pointer", "grab", "grabbing", "cell", "n-resize",
-      "s-resize", "ns-resize", "e-resize", "w-resize", "ew-resize", "ne-resize", "sw-resize",
-      "nesw-resize", "nw-resize", "se-resize", "nwse-resize", "default", "inherit", "auto",
-      "initial", "revert", "unset", "context-menu", "none"]
+  props: { // URL, default, auto, initial, context-menu
+    data: ["alias", "help", "copy", "progress", "wait", "crosshair", "no-drop", "not-allowed", "text", "vertical-text", "col-resize", "row-resize", "zoom-in", "zoom-out", "move", "all-scroll", "pointer", "grab", "grabbing", "cell", "n-resize", "s-resize", "ns-resize", "e-resize", "w-resize", "ew-resize", "ne-resize", "sw-resize", "nesw-resize", "nw-resize", "se-resize", "nwse-resize", "inherit", "revert", "unset", "none"]
   },
   components: {
     Button: (function () {
-      function Button(ctx, text) {
-        this.rect = new janvas.Rect(ctx,0,0,0,0);
-        this.rect.getStyle().setLineWidth(2);
+      function Button(ctx, raf, text) {
+        janvas.Animation.call(this, raf, 1000);
+        this.rect = new janvas.Rect(ctx, 0, 0, 0, 0);
         this.text = new janvas.Text(ctx, 0, 0, text);
-        this.text.getStyle().setFillStyle("white")
+        this.rect.getStyle().setFillStyle("pink").setLineWidth(2);
+        this.text.getStyle().setFillStyle("white").setFont("24px sans-serif")
           .setTextAlign("center").setTextBaseline("middle");
-        this._scale = this._targetScale = 1;
+        this.mousein = false;
       }
 
-      Button.prototype = {
-        setBackgroundColor: function (color) {
-          this.rect.getStyle().setFillStyle(color);
-        },
-        setFont: function (font) {
-          this.text.getStyle().setFont(font);
-        },
-        getText: function () {
-          return this.text.getText();
-        },
-        resize: function (x, y, size) {
-          var cx = x + size / 2, cy = y + size / 2;
-          this.rect.init(x, y, cx, cy).setWidth(size).setHeight(size);
-          this.text.init(cx, cy, cx, cy);
-        },
-        update: function (ratio) {
-          this.setScale(1 + (this._targetScale - 1)
-            * janvas.Utils.ease.out.elastic(ratio));
-        },
-        draw: function () {
-          this._activate ? this.rect.fillStroke() : this.rect.fill();
-          this.text.fill();
-        },
-        isPointInPath: function (x, y) {
-          return this.rect.isPointInPath(x, y);
-        },
-        setScale: function (scale) {
-          this._scale = scale;
-          this.rect.getMatrix().setScale(scale, scale);
-          this.text.getMatrix().setScale(scale, scale);
-        },
-        setTargetScale: function (scale) {
-          this._activate = scale > 1;
-          this._targetScale = scale;
+      janvas.Utils.inheritPrototype(Button, janvas.Animation);
+
+      Button.prototype.draw = function () {
+        this.mousein ? this.rect.fillStroke() : this.rect.fill();
+        this.text.fill();
+      };
+      Button.prototype.resize = function (x, y, size) {
+        var cx = x + size / 2, cy = y + size / 2;
+        this.rect.init(x, y, cx, cy).setWidth(size).setHeight(size);
+        this.text.init(cx, cy, cx, cy);
+      };
+      Button.prototype.setColor = function (color) {
+        this.rect.getStyle().setFillStyle(color);
+      };
+      Button.prototype.getText = function () {
+        return this.text.getText();
+      };
+      Button.prototype.setFont = function (font) {
+        this.text.getStyle().setFont(font);
+      };
+      Button.prototype.onUpdate = function (ratio) {
+        ratio = 0.236 * janvas.Utils.ease.out.elastic(ratio);
+        this.rect.getMatrix().setScale(1 + ratio, 1 + ratio);
+        this.text.getMatrix().setScale(1 + ratio, 1 + ratio);
+      };
+      Button.prototype.eventmove = function (x, y) {
+        if (this.rect.isPointInPath$1(x, y)) {
+          if (!this.mousein) {
+            if (this.isRunning()) this.reverse();
+            else this.start();
+            return this.mousein = true;
+          }
+        } else if (this.mousein) {
+          this.reverse();
+          this.mousein = false;
         }
       };
 
@@ -3260,100 +3256,63 @@ function cursor(container) {
   },
   methods: {
     init: function () {
-      this._initCalc();
-      this._initButtons();
+      var params = this.params = {};
+      params.center = new janvas.Point();
+      params.start = new janvas.Point();
+      params.hsl = new janvas.Hsl(0, 71, 62);
+      var buttons = this.buttons = new Array(length), i;
+      for (i = 0; i < this.data.length; i++) {
+        buttons[i] = new this.Button(this.$ctx, this.$raf, this.data[i]);
+      }
     },
     resize: function () {
-      this._calc(this.$width, this.$height);
-      this._resizeButtons();
-    },
-    update: function (ts) {
-      for (var i = 0; i < this.buttons.length; i++) {
-        this.buttons[i].update(ts / this.$duration);
-      }
-    },
-    draw: function () {
-      this.$clear();
-      this._drawButtons();
-      if (this._button) this._button.draw();
-    },
-    _initCalc: function () {
-      var infos = {};
-      infos.center = new janvas.Point();
-      infos.start = new janvas.Point();
-      infos.hsl = new janvas.Hsl(0, 71, 62);
-      this.infos = infos;
-    },
-    _initButtons: function () {
-      var data = this.data, length = data.length,
-        buttons = new Array(length), i;
-      for (i = 0; i < length; i++) {
-        buttons[i] = new this.Button(this.$ctx, data[i]);
-      }
-      this.buttons = buttons;
-    },
-    _calc: function (w, h) {
-      this.infos.center.init(w, h).scale(0.5, 0.5);
-      this.infos.size = Math.min(w, h) * 0.809;
-      this.infos.start.init(-this.infos.size / 2, -this.infos.size / 2)
-        .add(this.infos.center);
-      this.infos.start.init(
-        this._floor(this.infos.start.x),
-        this._floor(this.infos.start.y));
-      this.infos.count = Math.ceil(Math.sqrt(this.data.length));
-      this.infos.gridSize = this._floor(this.infos.size / this.infos.count);
-    },
-    _resizeButtons: function () {
+      var w = this.$width, h = this.$height, params = this.params;
+      params.center.init(w, h).scale(0.5, 0.5);
+      params.size = Math.min(w, h) * 0.809;
+      params.start.init(-params.size / 2, -params.size / 2).add(params.center);
+      params.start.init(Math.floor(params.start.x), Math.floor(params.start.y));
+      params.count = Math.ceil(Math.sqrt(this.data.length));
+      params.gridSize = Math.floor(params.size / params.count);
       var min = Infinity, fontFamily = "courier",
         i, button, fontSize;
       for (i = 0; i < this.buttons.length; i++) {
         button = this.buttons[i];
-        button.setBackgroundColor(this.infos.hsl.setHue(
-          360 / (this.infos.count - 1) * i
-        ).toHslString());
-        button.resize(
-          this.infos.start.x + (i % this.infos.count) * this.infos.gridSize,
-          this.infos.start.y + Math.floor(i / this.infos.count) * this.infos.gridSize,
-          this.infos.gridSize
-        );
+        button.setColor(params.hsl.setHue(360 / (params.count - 1) * i).toHslString());
+        button.resize(params.start.x + (i % params.count) * params.gridSize,
+          params.start.y + Math.floor(i / params.count) * params.gridSize,
+          params.gridSize);
         fontSize = janvas.Utils.measureTextFontSize(
-          button.getText(), this.infos.gridSize, fontFamily);
+          button.getText(), params.gridSize, fontFamily);
         min = fontSize < min ? fontSize : min;
       }
       for (i = 0; i < this.buttons.length; i++) {
         this.buttons[i].setFont("bold " + min + "px " + fontFamily);
       }
     },
-    _drawButtons: function () {
+    update: function (a, b) {
+      for (var i = 0; i < this.buttons.length; i++) {
+        this.buttons[i].update(b);
+      }
+    },
+    draw: function () {
+      this.$clear();
       for (var i = 0; i < this.buttons.length; i++) {
         this.buttons[i].draw();
       }
-    },
-    _floor: function (n) {
-      return Math.floor(n);
     }
   },
   events: {
-    mousemove: janvas.Utils.throttle(function (ev) {
-      if (this._button && this._button.isPointInPath(ev.$x, ev.$y)) return;
-      var buttons = this.buttons, flag = true;
-      for (var i = 0; i < buttons.length; i++) {
-        var button = buttons[i];
-        if (button.isPointInPath(ev.$x, ev.$y)) {
-          if (button !== this._button) {
-            if (this._button) this._button.setTargetScale(1);
-            button.setTargetScale(1.236);
-            this.$raf.start();
-            this.$canvas.style.cursor = button.getText();
-            this._button = button;
-          }
-          flag = false;
+    mousemove: function (ev) {
+      var btns = this.buttons, btn;
+      for (var i = 0; i < btns.length; i++) {
+        btn = btns[i];
+        if (btn.eventmove(ev.$x, ev.$y)) {
+          btns.push(btns.splice(i, 1)[0]);
+          this.$canvas.style.cursor = btn.getText();
           break;
         }
       }
-      if (flag) this.$canvas.style.cursor = "";
-      this.draw();
-    }, 16, true)
+    }
   }
 });
 }

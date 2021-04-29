@@ -53,7 +53,7 @@ var aboutWheel = new janvas.Canvas({
        *   2. 中心点不为 0, 0
        *     这种情况可选择缩放对象的 startX, startY
        *       因为存在中心点，所以在缩放后，需校准一次 offset，值为 _sx|_sy*(1-scale)
-       *     也可以优先选择缩放对象的 centerX, centerY
+       *     也可以优先选择缩放对象的 originX, originY
        *       这样子就无需校准对象的 offset
        * 以上为笛卡尔坐标系内对象的缩放内容，当存在中心点时优先缩放中心点而不是起始绘制点
        * 其实就是一个比例问题（以下内容：target为目标点，event为事件点，point为对象点）
@@ -69,8 +69,8 @@ var aboutWheel = new janvas.Canvas({
         this.img._sy * (1 - this.scale)
       );*/
       // 方式二（推荐）：
-      // var targetCx = ev.$x + (this.img.getCenterX() - ev.$x) * ev.$scaling,
-      //   targetCy = ev.$y + (this.img.getCenterY() - ev.$y) * ev.$scaling;
+      // var targetCx = ev.$x + (this.img.getOriginX() - ev.$x) * ev.$scaling,
+      //   targetCy = ev.$y + (this.img.getOriginY() - ev.$y) * ev.$scaling;
       // this.img.init(targetCx - this.size, targetCy - this.size, targetCx, targetCy)
       //   .getMatrix().setScale(ev.$scale, ev.$scale);
       // 方式三：方式二的简单动画版本，有需求时有必要写进 components 里进行实现，以便解耦
@@ -82,10 +82,10 @@ var aboutWheel = new janvas.Canvas({
     scaleAnimation: function () {
       if (this.img.animationQueue.length && this.img.count === this.img.maxCount) {
         var ev = this.img.animationQueue.pop();
-        this.img.lastCx = this.img.getCenterX();
-        this.img.lastCy = this.img.getCenterY();
-        this.img.targetCx = ev.$x + (this.img.getCenterX() - ev.$x) * ev.$scaling;
-        this.img.targetCy = ev.$y + (this.img.getCenterY() - ev.$y) * ev.$scaling;
+        this.img.lastCx = this.img.getOriginX();
+        this.img.lastCy = this.img.getOriginY();
+        this.img.targetCx = ev.$x + (this.img.getOriginX() - ev.$x) * ev.$scaling;
+        this.img.targetCy = ev.$y + (this.img.getOriginY() - ev.$y) * ev.$scaling;
         this.img.lastScale = ev.$lastScale;
         this.img.targetScale = ev.$scale;
         this.img.count = 0;

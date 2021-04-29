@@ -63,8 +63,8 @@ var tiger = new janvas.Canvas({
     wheel: function (ev) {
       ev.preventDefault();
       this.shapes.forEach(function (shape) {
-        var targetSx = ev.$x + (shape.getCenterX() - ev.$x) * ev.$scaling,
-          targetSy = ev.$y + (shape.getCenterY() - ev.$y) * ev.$scaling;
+        var targetSx = ev.$x + (shape.getOriginX() - ev.$x) * ev.$scaling,
+          targetSy = ev.$y + (shape.getOriginY() - ev.$y) * ev.$scaling;
         shape.init(targetSx, targetSy, targetSx, targetSy)
           .getMatrix().setScale(ev.$scale, ev.$scale);
       });

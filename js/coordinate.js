@@ -50,7 +50,7 @@ var coordinate = new janvas.Canvas({
   functions: {
     setStyles: function () {
       this.background.getStyle().setFillStyle(this._backgroundColor);
-      this.oText.getStyle().setFont(this._font).setTextBaseline("top");
+      this.oText.getStyle().setFont(this._font).setTextAlign("left").setTextBaseline("top");
       this.xLines.forEach(function (line) {
         line.getStyle().setStrokeStyle(this._dashColor).setLineDash(this._dash);
       }, this);
@@ -61,7 +61,7 @@ var coordinate = new janvas.Canvas({
         text.getStyle().setFont(this._font).setTextAlign("center").setTextBaseline("top");
       }, this);
       this.yTexts.forEach(function (text) {
-        text.getStyle().setFont(this._font).setTextBaseline("middle");
+        text.getStyle().setFont(this._font).setTextAlign("left").setTextBaseline("middle");
       }, this);
     },
     adjustLength: function (count, texts, lines, inAxisX) {
