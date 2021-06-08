@@ -105,3 +105,7 @@ HTML Element.style.cursor 样式对照示例。
 ## [AboutEdge](https://jarenchow.github.io/JanvasExamples/html/about_edge.html)
 
 v2.1.0 新增绘制连线的 Edge 类，实现了图数据库中的连线的样式。
+
+## 其他
+
+其他一些小示例写在 [CSDN](https://blog.csdn.net/M3oM3oChong) 和 [CodePen](https://codepen.io/jarenchow)
