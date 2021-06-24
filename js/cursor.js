@@ -41,7 +41,7 @@ var cursor = new janvas.Canvas({
         this.text.getMatrix().setScale(1 + ratio, 1 + ratio);
       };
       Button.prototype.eventmove = function (x, y) {
-        if (this.rect.isPointInPath$1(x, y)) {
+        if (this.rect.isPointInPath(x, y)) {
           if (!this.mousein) {
             if (this.isRunning()) this.reverse();
             else this.start();
